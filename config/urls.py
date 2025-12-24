@@ -24,5 +24,6 @@ urlpatterns = [
     path('api/auth/login' , TokenObtainPairView.as_view() , name = 'token_obtain_pair'),
     path('api/auth/refresh' , TokenRefreshView.as_view() , name = 'token_refresh'),
     path('api/workspace/',include('workspace.urls'),name='workspace'),
-    path('api/',include('board.urls'),name='board')
+    path('api/board/',include('board.urls'),name='board'),
+    path('api/card/',include('cards.urls'),name = 'cards')
 ]

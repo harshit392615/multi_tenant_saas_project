@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'workspace',
-    'common'
+    'common',
+    'board',
+    'cards',
 ]
 
 MIDDLEWARE = [

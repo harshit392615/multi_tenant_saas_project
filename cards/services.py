@@ -1,5 +1,6 @@
 from .models import Card
 from board.models import Board
+from activities.services import log_Activity
 
 from common.exceptions import PermissionDenied
 
@@ -10,11 +11,24 @@ def Create_Card(*,board,actor,title,description = ''):
     if board.is_archived:
         raise PermissionDenied("board is archived ")
     
-    return Card.objects.create(
+    card =  Card.objects.create(
+        organization = board.organization,
         board = board,
         title = title,
         description = description,
     )
+
+    log_Activity(
+        organization=board.organization,
+        actor=actor,
+        action="card_created",
+        entity_type='card',
+        entity_id=card.id,
+        metadata={'title':card.title},
+    )
+
+    return card
+
 def Move_Card(*,card,actor,new_status):
     if actor.role not in ['owner','admin','member']:
         raise PermissionDenied("You are not allowed to change status")
@@ -23,6 +37,15 @@ def Move_Card(*,card,actor,new_status):
         raise PermissionDenied("This is not a valid status ")
     
     card.status = new_status
+
+    log_Activity(
+        organization=card.organization,
+        actor=actor,
+        action="card_moved",
+        entity_type='card',
+        entity_id=card.id,
+        metadata={'title':card.title},
+    )
     card.save(update_fields = ["status"])
 
     

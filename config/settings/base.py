@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'common',
     'board',
     'cards',
+    'activities',
 ]
 
 MIDDLEWARE = [

@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
+import django_redis 
 
 load_dotenv()
 
@@ -142,7 +143,14 @@ REST_FRAMEWORK = {
         ),
         'DEFAULT_PERMISSION_CLASSES':(
             'rest_framework.permissions.IsAuthenticated',
-        )
+        ),
+        'DEFAULT_THROTTLE_CLASSES':[   # throttling class
+            'core.throttles.OrganizationThrottling',  
+        ],
+        'DEFAULT_THROTTLE_RATES':{ # throttling limit
+            'organization':'1000/hour',
+        }
+
 }
 
 #SIMPLE JWT configurations
@@ -152,4 +160,25 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKEN':True,
     'BLACKLIST_AFTER_ROTATION':True,
     'AUTH_HEADER_TYPES':('Bearer',),
+}
+
+# email sending configurations
+
+AUTH_USER_MODEL = 'account.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+CACHE = {    # cache configurations
+    'default' : {
+        'BACKEND' : 'django_redis.cache.RedisCache',
+        'LOCATION' : "redis://127.0.0.1:6379/1",
+        'OPTIONS':{
+            'CLIENT_CLASS':'django_redis.client.DefaultClient',
+        },
+    },
 }

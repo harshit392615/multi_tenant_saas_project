@@ -10,6 +10,7 @@ class TenantMiddleware:
 
         if not org_slug:
             request.organization = None
+            request.membership = None
             return self.get_response(request)
 
         try: 

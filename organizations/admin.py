@@ -4,4 +4,4 @@ from .models import Organization
 
 @admin.register(Organization)
 class Organization(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name','slug','is_deleted']

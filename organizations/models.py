@@ -1,13 +1,20 @@
 from django.db import models
 import uuid
+from autoslug import AutoSlugField
 # Create your models here.
 
 class Organization(models.Model):
+    TYPE_CHOICES = [
+        ('personal','Personal'),
+        ('team','Team'),
+    ]
     id = models.UUIDField(primary_key=True , default=uuid.uuid4 , editable=False)
     name = models.CharField(max_length=250)
-    slug = models.SlugField(unique=True)
+    slug = AutoSlugField(populate_from = 'name',unique=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(max_length=20 ,  choices=TYPE_CHOICES)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

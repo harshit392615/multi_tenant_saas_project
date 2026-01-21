@@ -9,6 +9,7 @@ def send_verification_email(self,*,email,verify_url):
     send_mail(
         subject = 'verify your email',
         message=f'click this link to verify your email,{verify_url}',
-        from_email = f'{os.getenv("EMAIL_HOST_USER")}',
-        recipient_list=[email]
+        from_email = os.getenv("EMAIL_HOST_USER"),
+        recipient_list=[email],
+        fail_silently=False
     )

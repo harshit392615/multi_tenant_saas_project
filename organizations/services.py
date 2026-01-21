@@ -1,5 +1,5 @@
 from .models import Organization , Membership
-from common.exceptions import PermissionDenied ,ValidationError
+from common.exceptions import PermissionDenied ,ValidationError 
 
 def Create_Org(*,user,name,type):
     organization = Organization.objects.create(
@@ -56,3 +56,17 @@ def Archive_Org(*,slug,actor):
         raise ValidationError("invalid organization id")
     organization.is_archived = True
     organization.save(update_fields = ['is_archived'])
+
+def Add_Update_Membership(actor , user , organization , role):
+    if actor.role not in ['owner','admin']:
+        raise PermissionError("you are not allowed to make this request")
+    
+    if role not in ['admin','member','viewer']:
+        raise ValidationError("not a valid role")
+    membership = Membership.objects.update_or_create(
+        organization = organization,
+        user = user,
+        role = role
+    )
+
+    return membership

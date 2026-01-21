@@ -1,3 +1,25 @@
 from django.shortcuts import render
+from organizations.views import TenantAPIviews
+from core.throttles import OrganizationThrottling
+from .selectors import get_notes
+from .serializers import notes_Serializer
+from rest_framework import status
+from rest_framework.response import Response
+from .services import create_note
 
 # Create your views here.
+
+class Notes_List_create(TenantAPIviews):
+   throttle_classes = [OrganizationThrottling]
+   def get(self , request , workspace_slug):
+      notes = get_notes(workspace_slug , request.membership , request.organization)
+      serializer = notes_Serializer(notes , many = True)
+      return Response(serializer.data , status = status.HTTP_202_ACCEPTED)
+
+   def post(self , request , workspace_slug):
+      serializer = notes_Serializer(data = request.data)
+      if serializer.is_valid():
+         note = create_note(workspace_slug , request.membership , request.organization , serializer.validated_data)
+         serializer = notes_Serializer(note)
+         return Response(serializer.data , status=status.HTTP_201_CREATED)
+

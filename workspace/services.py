@@ -1,6 +1,7 @@
 from .models import Workspace
 from common.exceptions import PermissionDenied
-from django.core import cache
+from activities.services import log_Activity
+from django.core.cache import cache
 
 def Create_Workspace(*,organization , actor , name):
     if actor.role not in ['owner','admin']:
@@ -12,6 +13,8 @@ def Create_Workspace(*,organization , actor , name):
     )
 
     cache.delete(f'org:{organization.id}:workspaces')
+
+    log_Activity(organization=organization , actor=actor , action="workspace created" , entity_type="workspace" , entity_id=workspace.id ,  )
 
     return workspace
 

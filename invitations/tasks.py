@@ -7,7 +7,7 @@ def send_invitation_email(self,email,org_slug,token):
     invite_url = f'https://{org_slug}.mtsp.com/invite/{token}'
     subject = "You're invited!"
     message = f"Hello,\n\nYou have been invited to join {org_slug}.\nUse this link to accept the invitation:\n{invite_url}\n\nThanks!"
-    from_email = settings.DEFAULT_FROM_EMAIL
+    from_email = settings.EMAIL_HOST_USER
     recipient_list = [email]
 
     send_mail(

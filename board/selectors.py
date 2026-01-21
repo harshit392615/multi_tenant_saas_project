@@ -7,3 +7,5 @@ def get_boards_for_workspace(*,workspace):
         is_archived = False,
         is_deleted = False,
     ).order_by('created_at')
+
+    return boards

@@ -1,0 +1,325 @@
+/* ==================== VARIABLES & RESET ==================== */
+:root {
+    /* Premium Neutral Palette */
+    --bg-app: #FFFFFF;
+    --bg-sidebar: #F7F7F5;
+    --bg-card: #FFFFFF;
+    --bg-input: #F0F0F0;
+    
+    --text-primary: #37352F;
+    --text-secondary: #787774;
+    --text-muted: #9B9A97;
+    
+    --border-light: #E9E9E7;
+    --border-focus: #2EAADC; /* Subtle blue focus */
+    
+    --shadow-card: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0px 4px 12px rgba(0, 0, 0, 0.08);
+
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-stack);
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== LAYOUT ==================== */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding: 48px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    background-color: var(--bg-app);
+}
+
+/* ==================== SIDEBAR COMPONENTS ==================== */
+.sidebar-header {
+    margin-bottom: 24px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: default;
+    transition: background 0.2s;
+}
+
+.user-profile:hover {
+    background-color: rgba(0,0,0,0.04);
+}
+
+.avatar {
+    width: 20px;
+    height: 20px;
+    background-color: #E3E2E0;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.username {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Search Bar (Targeting class used by JS) */
+.search-bar {
+    position: relative;
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+}
+
+.search-bar svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: #FFFFFF;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    outline: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.search-bar input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.1);
+}
+
+/* Navigation Lists */
+.nav-section {
+    margin-bottom: 24px;
+}
+
+.nav-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-left: 8px;
+    font-weight: 600;
+}
+
+.nav-list {
+    list-style: none;
+}
+
+/* JS Generates basic <li> elements, we style them here */
+.nav-list li {
+    padding: 6px 8px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-list li:hover {
+    background-color: rgba(55, 53, 47, 0.08);
+    color: var(--text-primary);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light);
+}
+
+.status-indicator {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background-color: #2EAADC;
+    border-radius: 50%;
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.content-section {
+    margin-bottom: 64px;
+}
+
+.section-header {
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.section-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-light);
+    margin: 48px 0;
+}
+
+/* Input Groups for Creation */
+.input-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    background: #FAFAFA;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.premium-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+    background: #FFFFFF;
+}
+
+.premium-input:focus {
+    border-color: var(--text-secondary);
+}
+
+.btn-primary {
+    padding: 8px 16px;
+    background-color: var(--text-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #000000;
+}
+
+/* ==================== GRID & CARDS (JS targets) ==================== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+/* The JS creates <article class="card [type]-card"> */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: var(--shadow-card);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(0,0,0,0.1);
+}
+
+/* Card Typography */
+.card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+/* The JS creates <button class="btn-ghost"> inside cards */
+.btn-ghost {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    margin-top: auto;
+    transition: color 0.2s;
+}
+
+.btn-ghost:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+}
+
+/* Subtle distinction for personal vs team if class exists */
+.card[data-slug*="personal"] {
+    background-color: #FAFAFA;
+}

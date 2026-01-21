@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace</title>
+    <link rel="stylesheet" href="../css/workspace.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR (Visual Navigation) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-profile">
+                    <div class="avatar">W</div>
+                    <span class="username">Workspace</span>
+                </div>
+            </div>
+
+            <!-- Visual Search (UI Only - Matches UX requirements) -->
+            <div class="sidebar-search">
+                <span class="search-icon">🔍</span>
+                <span class="search-placeholder">Search...</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-header">Favorites</div>
+                    <!-- Visual links only, preserving existing page state -->
+                    <a href="#" class="nav-item active">
+                        <span class="icon">🏠</span> Overview
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-header">Private</div>
+                    <a href="#boards" class="nav-item">
+                        <span class="icon">📋</span> Boards
+                    </a>
+                    <a href="#notes" class="nav-item">
+                        <span class="icon">📝</span> Notes
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            
+            <!-- TOP NAVBAR -->
+            <header class="top-nav">
+                <div class="breadcrumbs">
+                    <span class="crumb">Dashboard</span>
+                    <span class="separator">/</span>
+                    <!-- JS Target: Workspace Title -->
+                    <h1 id="workspace-title" class="crumb current">Loading...</h1>
+                </div>
+                <div class="nav-actions">
+                    <button class="icon-btn">•••</button>
+                </div>
+            </header>
+
+            <div class="scroll-container">
+                <div class="content-wrapper">
+
+                    <!-- BOARDS SECTION -->
+                    <section class="module-section" id="view-boards">
+                        <div class="section-header">
+                            <h2>Boards</h2>
+                        </div>
+
+                        <!-- Create Board Input Area -->
+                        <div class="creation-row">
+                            <div class="input-group">
+                                <input
+                                    type="text"
+                                    id="board-name-input"
+                                    class="notion-input"
+                                    placeholder="New board name..."
+                                />
+                                <button id="create-board-btn" class="btn-primary">New Board</button>
+                            </div>
+                        </div>
+
+                        <!-- JS Target: Boards List -->
+                        <!-- Styled as a Grid of Cards -->
+                        <ul id="boards-list" class="grid-list">
+                            <!-- JS populates <li> items here -->
+                        </ul>
+                    </section>
+
+                    <div class="divider"></div>
+
+                    <!-- NOTES SECTION -->
+                    <section class="module-section" id="view-notes">
+                        <div class="section-header">
+                            <h2>Notes</h2>
+                        </div>
+
+                        <!-- Create Note Input Area -->
+                        <div class="creation-card">
+                            <input
+                                type="text"
+                                id="note-title-input"
+                                class="notion-input title-input"
+                                placeholder="Note title"
+                            />
+                            <textarea
+                                id="note-content-input"
+                                class="notion-textarea"
+                                placeholder="Write something..."
+                                rows="3"
+                            ></textarea>
+                            <div class="card-actions">
+                                <button id="create-note-btn" class="btn-secondary">Add Note</button>
+                            </div>
+                        </div>
+
+                        <!-- JS Target: Notes List -->
+                        <!-- Styled as a List of Rows -->
+                        <ul id="notes-list" class="row-list">
+                            <!-- JS populates <li> items here -->
+                        </ul>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Existing Javascript Included -->
+    <script src="../js/workspace.js"></script>
+</body>
+</html>

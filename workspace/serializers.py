@@ -1,7 +1,12 @@
 from rest_framework import serializers
 from .models import Workspace
 
-class WorkspaceSerializer(serializers.ModelSerializer):
+class WorkspaceCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
-        fields = ["id","name","created_at"]
+        fields = ["id","name"]
+
+class WorkspaceOutputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workspace
+        fields = ["id","name",'slug']

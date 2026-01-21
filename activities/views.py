@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from .selectors import get_org_activity , get_entity_activity
 from rest_framework.response import Response
 from .serializers import ActivitySerializer
-from uuid import UUID
 from rest_framework.exceptions import ValidationError
 
 # Create your views here.

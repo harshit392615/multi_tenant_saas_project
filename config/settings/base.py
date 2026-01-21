@@ -15,6 +15,8 @@ from dotenv import load_dotenv
 import os
 from datetime import timedelta
 import django_redis 
+from corsheaders.defaults import default_headers
+import django_extensions
 
 load_dotenv()
 
@@ -56,10 +58,14 @@ INSTALLED_APPS = [
     'cards',
     'activities',
     'invitations',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'django_extensions',
+    'notes',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,6 +92,14 @@ TEMPLATES = [
         },
     },
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-org-slug",
+]
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

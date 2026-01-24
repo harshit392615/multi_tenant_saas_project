@@ -74,11 +74,20 @@ class Organization_Membership_API(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]
     def get(self , request):
         memberships = get_memebrship_for_org(request.membership , request.organization)
-        serializer = Membership_Get(memberships , many = True)
+        data = []
+        for membership in memberships:
+            mem = {   # NEW dict every loop
+                "username": membership.user.username,
+                "role": membership.role,
+                "email": membership.user.email,
+            }
+            data.append(mem)
+
+        serializer = Membership_Get(data , many = True)
         return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
     def post(self,request):
         serializer = Membership_add_update(data = request.data)
         if serializer.is_valid():
-            membership = Add_Update_Membership(request.membership , serializer.validated_data['user'] , request.organization , serializer.validated_data['role'])
+            membership = Add_Update_Membership(request.membership , request.organization , serializer.validated_data)
             return Response(status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)

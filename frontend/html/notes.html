@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace Notes</title>
+    <link rel="stylesheet" href="../css/notes.css">
+    <!-- Styles are internal to meet single-file requirement, normally would be linked -->
+</head>
+<body>
+
+    <div class="workspace-layout">
+        <!-- LEFT PANE: NOTES LIST -->
+        <aside class="notes-sidebar">
+            <header class="sidebar-header">
+                <h2>Notes</h2>
+                <div class="header-actions">
+                    <button class="icon-btn" aria-label="Add Note">+</button>
+                </div>
+            </header>
+            
+            <div class="scroll-container">
+                <!-- 
+                   MANDATORY CONTAINER ID: notes-list 
+                   Existing logic injects <li> items here.
+                -->
+                <ul id="notes-list" class="notes-list-styled">
+                    <!-- Loading State Placeholder -->
+                    <li class="loading-placeholder">Loading notes...</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- RIGHT PANE: OPEN NOTE VIEW -->
+        <main class="note-stage">
+            <!-- Empty State (Default) -->
+            <div id="empty-state" class="empty-state">
+                <div class="empty-icon">📝</div>
+                <h3>Select a note to view</h3>
+                <p>Choose a note from the sidebar to start reading or editing.</p>
+            </div>
+
+            <!-- Active Note View -->
+            <div id="active-note-view" class="note-content hidden">
+                <header class="note-header">
+                    <h1 id="note-display-title" class="editable-title"></h1>
+                    <div class="note-meta">
+                        <span class="badge">Read Only</span>
+                    </div>
+                </header>
+                <div class="note-body-wrapper">
+                    <div id="note-display-body" class="typography-body"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/notes.js"></script>
+</body>
+</html>

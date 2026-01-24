@@ -5,5 +5,11 @@ class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = (
-            'id','title','description','status','due_date','assignee','created_at'
+            'title','description','status','due_date','assignee','created_at','slug'
+        )
+class CardCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = (
+            'title','description','status','due_date',
         )

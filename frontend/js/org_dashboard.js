@@ -4,7 +4,9 @@ const CONFIG = {
     ENDPOINTS: {
         WORKSPACES: "/workspace/",
         MEMBERS: "/organization/membership/",
-        LOGS: "/activities/activities/"
+        LOGS: "/activities/activities/",
+        ADD_MEMBER : "/organization/membership/"
+
     }
 };
 
@@ -182,7 +184,7 @@ function renderMembers() {
     state.members.forEach(user => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-        <td>${user.name}</td>
+        <td>${user.username}</td>
         <td>${user.email}</td>
         <td>${user.role}</td>
         <td>${user.status}</td>
@@ -200,8 +202,8 @@ function renderLogs() {
     state.logs.forEach(log => {
         const li = document.createElement("li");
         li.innerHTML = `
-        <p>${log.message}</p>
-        <span>${log.timestamp}</span>
+        <p>${log.action}</p>
+        <span>${log.created_at}</span>
         `;
         container.appendChild(li);
     });
@@ -251,6 +253,59 @@ function setupCreateWorkspace() {
         }
     });
 }
+function setupAddMember() {
+    const btn = document.getElementById("add-member-btn");
+    const modal = document.getElementById("add-member-modal");
+    const cancel = document.getElementById("add-member-cancel");
+    const submit = document.getElementById("add-member-submit");
+
+    const emailInput = document.getElementById("member-email-input");
+    const roleInput = document.getElementById("member-role-input");
+
+    if (!btn || !modal) return;
+
+    btn.addEventListener("click", () => {
+        modal.style.display = "block";
+        emailInput.value = "";
+        roleInput.value = "member";
+        emailInput.focus();
+    });
+
+    cancel.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    modal.addEventListener("click", e => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+
+    submit.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const role = roleInput.value;
+
+        if (!email) return alert("Email required");
+
+        submit.disabled = true;
+
+        try {
+            await postJSON(
+                `${CONFIG.API_BASE}${CONFIG.ENDPOINTS.ADD_MEMBER}`,
+                { email, role }
+            );
+
+            await loadMembers();
+            renderMembers();
+
+            modal.style.display = "none";
+        } catch (err) {
+            console.error("Add member failed:", err);
+            alert("Failed to add member");
+        } finally {
+            submit.disabled = false;
+        }
+    });
+}
+
 
 // ==================== UI STATE ====================
 function setLoading(isLoading) {
@@ -261,6 +316,7 @@ function setLoading(isLoading) {
 document.addEventListener("DOMContentLoaded", () => {
     initOrgDashboard();
     setupCreateWorkspace();
+     setupAddMember();
 
     //     // CREATE WORKSPACE
     // document.getElementById("create-workspace-submit")?.addEventListener("click", async () => {

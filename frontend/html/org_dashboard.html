@@ -96,6 +96,11 @@
                 <div class="card-header">
                     <h2>Members</h2>
                     <span class="badge">Active</span>
+                    <!-- Add Member Button -->
+<button id="add-member-btn" class="btn btn-primary">
+    + Add Member
+</button>
+
                 </div>
                 <div class="table-container">
                     <table>
@@ -179,6 +184,33 @@
             </div>
         </div>
     </div>
+    <!-- Add Member Modal -->
+<div id="add-member-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add Member</h3>
+        </div>
+
+        <div class="modal-body">
+            <label>Email</label>
+            <input id="member-email-input" type="email" placeholder="user@example.com">
+
+            <label style="margin-top:1rem;">Role</label>
+            <select id="member-role-input">
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div class="modal-footer">
+            <button id="add-member-cancel" class="btn btn-ghost">Cancel</button>
+            <button id="add-member-submit" class="btn btn-primary">
+                Invite
+            </button>
+        </div>
+    </div>
+</div>
+
 
     <!-- Script Injection Placeholder -->
     <script src="../js/org_dashboard.js"></script>

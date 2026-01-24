@@ -21,14 +21,19 @@ class Organization_Update_Serializer(serializers.Serializer):
 class Organization_Archive_Serializer(serializers.Serializer):
     slug = serializers.CharField()
 
-class Membership_add_update(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Membership
-        fields = ['user' , 'role']
+class Membership_add_update(serializers.Serializer):
+    email = serializers.EmailField()
+    role = serializers.ChoiceField(
+        choices = [
+        "admin",'member','viewer'
+        ]
+    )
 
-class Membership_Get(serializers.ModelSerializer):
-
-    class Meta:
-        model = Membership
-        fields = ['user','role']
+class Membership_Get(serializers.Serializer):
+    username = serializers.CharField()
+    role = serializers.ChoiceField(
+        choices = [
+        "owner","admin",'member','viewer'
+        ]
+    )
+    email = serializers.EmailField()

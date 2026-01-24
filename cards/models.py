@@ -2,6 +2,7 @@ from django.db import models
 from core.models import TenantBaseModel
 from board.models import Board
 from accounts.models import User
+from autoslug import AutoSlugField
 # Create your models here.
 
 class Card(TenantBaseModel):
@@ -18,6 +19,9 @@ class Card(TenantBaseModel):
     status = models.CharField(max_length=20 , choices=STATUS_CHOICES , default='todo')
     assignee = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name='assigned_cards')
     due_date = models.DateTimeField(null=True,blank=True)
+    board = models.ForeignKey(Board , on_delete=models.CASCADE )
+    slug = AutoSlugField(populate_from = 'title',unique=True)
+
 
     def save(self , *args , **kwargs):
         self.organization = self.board.organization

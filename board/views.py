@@ -8,7 +8,7 @@ from workspace.models import Workspace
 from .services import Create_Board
 from .selectors import get_boards_for_workspace
 from core.throttles import OrganizationThrottling
-from .serializers import BoardSerializer
+from .serializers import BoardSerializer , BoardCreateSerializer
 # Create your views here.
 
 class BoardListCreateAPI(TenantAPIviews):
@@ -22,6 +22,6 @@ class BoardListCreateAPI(TenantAPIviews):
     def post(self , request , workspace_slug):
         workspace = Workspace.objects.get(slug = workspace_slug , organization = request.organization,is_deleted = False)
         board = Create_Board(workspace=workspace,actor=request.membership,name=request.data.get('name'))
-        serializer = BoardSerializer(board)
+        serializer = BoardCreateSerializer(board)
         return Response(serializer.data , status=status.HTTP_201_CREATED)
 

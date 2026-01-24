@@ -85,7 +85,9 @@ function renderBoards(boards) {
 
     boards.forEach(board => {
         const li = document.createElement("li");
+        li.dataset.slug = board.slug
         li.textContent = board.name;
+        
         list.appendChild(li);
     });
 }
@@ -105,6 +107,7 @@ function renderNotes(notes) {
             <strong>${note.title}</strong><br>
             ${note.content}
         `;
+        li.dataset.slug = note.slug
         list.appendChild(li);
     });
 }
@@ -198,4 +201,24 @@ function setupCreateNote() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", initWorkspaceDashboard());
+document.addEventListener("DOMContentLoaded", () => {
+    initWorkspaceDashboard()
+
+    document.getElementById("boards-list")?.addEventListener("click", e => {
+    const li = e.target.closest("li");
+    if (!li) return;
+
+    localStorage.setItem("current_board", li.dataset.slug);
+    window.location.href = "../html/boards.html";
+});
+
+
+    document.getElementById("notes-list")?.addEventListener("click", e => {
+    const li = e.target.closest("li");
+    if (!li) return;
+
+    localStorage.setItem("current_note", li.dataset.slug);
+    window.location.href = "../html/notes.html";
+});
+
+});

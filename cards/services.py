@@ -4,7 +4,7 @@ from activities.services import log_Activity
 
 from common.exceptions import PermissionDenied
 
-def Create_Card(*,board,actor,title,description = ''):
+def Create_Card(*,board,actor,assignee,serializer):
     if actor.role not in ['owner','admin','member']:
         raise PermissionDenied("you are not allowed to create cards")
 
@@ -14,8 +14,8 @@ def Create_Card(*,board,actor,title,description = ''):
     card =  Card.objects.create(
         organization = board.organization,
         board = board,
-        title = title,
-        description = description,
+        assignee = assignee,
+        **serializer
     )
 
     log_Activity(
@@ -29,15 +29,22 @@ def Create_Card(*,board,actor,title,description = ''):
 
     return card
 
-def Move_Card(*,card,actor,new_status):
+def Update_Card(* ,slug,actor,serializer):
     if actor.role not in ['owner','admin','member']:
         raise PermissionDenied("You are not allowed to change status")
     
-    if new_status not in dict(Card.STATUS_CHOICES):
+    if serializer['status'] not in dict(Card.STATUS_CHOICES):
         raise PermissionDenied("This is not a valid status ")
     
-    card.status = new_status
+    card = Card.objects.get(
+        slug = slug
+    )
 
+    for field, value in serializer.items():
+        setattr(card, field, value)
+
+    card.save() 
+    
     log_Activity(
         organization=card.organization,
         actor=actor,
@@ -46,7 +53,8 @@ def Move_Card(*,card,actor,new_status):
         entity_id=card.id,
         metadata={'title':card.title},
     )
-    card.save(update_fields = ["status"])
+
+    return card
 
     
 def Archive_Card(*,card,actor):

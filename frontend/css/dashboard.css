@@ -323,3 +323,65 @@ body {
 .card[data-slug*="personal"] {
     background-color: #FAFAFA;
 }
+
+/* Notification wrapper */
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+}
+
+/* Bell button */
+.notification-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Badge for unread count */
+.notification-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dropdown container */
+.notification-dropdown {
+    display: none; /* hidden by default */
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    width: 260px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-hover);
+    z-index: 1000;
+}
+
+/* Individual notification card inside dropdown */
+.notification-dropdown .notification-card {
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    margin: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.notification-dropdown .notification-card:last-child {
+    border-bottom: none;
+}

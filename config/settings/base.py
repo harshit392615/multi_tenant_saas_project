@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'notes',
+    'notification',
 ]
 
 MIDDLEWARE = [
@@ -97,9 +98,16 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
 ]
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    "x-org-slug",
+    "X-ORG-SLUG",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+]
+
+
+ASGI_APPLICATION = 'config.asgi.application'
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

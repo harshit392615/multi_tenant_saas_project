@@ -1,9 +1,11 @@
+console.count("dashboard.js loaded");
+
 // ==================== CONFIG ====================
 // ==================== CONFIG ====================
 const CONFIG = {
     API_BASE: "http://127.0.0.1:8000/api",
     ENDPOINTS: {
-        ORG_LIST: "/organization/list",
+        ORG_LIST: "/organization/list/",
         ORG_CREATE: "/organization/create/",
         WORKSPACE_LIST: "/workspace/",
         WORKSPACE_CREATE: "/workspace/"
@@ -26,6 +28,7 @@ async function fetchJSON(url, headers = {}) {
     let res = await fetch(url, { headers });
 
     if (res.status === 401) {
+        console.log("see this")
         const refresh = localStorage.getItem("refresh");
         if (!refresh) {
             localStorage.clear();
@@ -207,6 +210,8 @@ async function initDashboard() {
 
 // ==================== EVENTS ====================
 document.addEventListener("DOMContentLoaded", () => {
+    console.count("DOMContentLoaded fired");
+
     initDashboard();
 
     // SEARCH
@@ -279,5 +284,117 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = "";
         await loadWorkspaces();
         renderWorkspaces();
+
     });
+    // ==================== NOTIFICATIONS SSE ====================
+
+const notificationBtn = document.getElementById("notification-btn");
+const notificationDropdown = document.getElementById("notification-dropdown");
+const notificationCount = document.getElementById("notification-count");
+
+let unreadCount = 0;
+let dropdownOpen = false;
+
+// Toggle dropdown on click
+notificationBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dropdownOpen = !dropdownOpen;
+    notificationDropdown.style.display = dropdownOpen ? "block" : "none";
+
+    // If closing the dropdown, mark notifications as read
+    if (!dropdownOpen) {
+        const token = localStorage.getItem("access");
+        if (token) {
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/notification/update/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ mark_read: true }) // optional payload
+                });
+
+                if (!res.ok) console.error("Failed to update notifications:", res.status);
+                else console.log("Notifications marked as read");
+
+                // Reset unread count locally
+                unreadCount = 0;
+                notificationCount.textContent = unreadCount;
+            } catch (err) {
+                console.error("Error calling notification update API:", err);
+            }
+        }
+    }
+});
+
+// Close dropdown if clicked outside
+document.addEventListener("click", (e) => {
+    if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target) && dropdownOpen) {
+        dropdownOpen = false;
+        notificationDropdown.style.display = "none";
+
+        // Call API to mark read when closing
+        const token = localStorage.getItem("access");
+        if (token) {
+            fetch(`${CONFIG.API_BASE}/notification/update/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ mark_read: true })
+            }).then(res => {
+                if (!res.ok) console.error("Failed to update notifications:", res.status);
+                else console.log("Notifications marked as read");
+                unreadCount = 0;
+                notificationCount.textContent = unreadCount;
+            }).catch(err => console.error(err));
+        }
+    }
+});
+
+// Function to add a notification
+function addNotification(title, description) {
+    const card = document.createElement("div");
+    card.className = "notification-card";
+    card.innerHTML = `<h4>${title}</h4><p>${description}</p>`;
+
+    notificationDropdown.prepend(card);
+
+    if (!dropdownOpen) {
+        unreadCount += 1;
+        notificationCount.textContent = unreadCount;
+    }
+}
+    function initNotifications() {
+    const token = localStorage.getItem("access");
+    if (!token) return;
+
+    const eventSource = new EventSource(`${CONFIG.API_BASE}/notification/?token=${token}`);
+
+    eventSource.onmessage = function(event) {
+    try {
+        const data = JSON.parse(event.data);
+        const title = data.title || "No Title";
+        const description = data.description || "No Description";
+
+        addNotification(title, description); // call our new function
+    } catch (err) {
+        console.error("Invalid notification data:", event.data);
+    }
+};
+
+
+    eventSource.onerror = function(err) {
+        console.error("SSE connection error:", err);
+        eventSource.close();
+        setTimeout(initNotifications, 5000);
+    };
+}
+
+initNotifications();
+
 });

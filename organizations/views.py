@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from .models import Membership
 from django.http import HttpResponseForbidden
 from core.throttles import OrganizationThrottling
+from notification.tasks import send_user_notification
+
 # Create your views here
 
 class TenantAPIviews(APIView):
@@ -29,6 +31,7 @@ class Organization_List_API(APIView):
     def get(self , request):
         qs = get_org_for_user(user=request.user)
         serializer = Organization_Serializer(qs ,  many = True)
+        # send_user_notification.delay("title" , "description" , request.user.id)
         return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
     
 class Organization_Create_API(APIView):
@@ -38,6 +41,7 @@ class Organization_Create_API(APIView):
         if serializer.is_valid():
             organization = Create_Org(user=request.user , name=serializer.validated_data['name'] , type=serializer.validated_data['type'])
             serializer = Organization_Serializer(organization)
+            send_user_notification.delay("title" , "deiption" , request.user.id)
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         
 class Organization_Update_API(TenantAPIviews):
@@ -91,3 +95,6 @@ class Organization_Membership_API(TenantAPIviews):
             membership = Add_Update_Membership(request.membership , request.organization , serializer.validated_data)
             return Response(status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+
+# add membership update api

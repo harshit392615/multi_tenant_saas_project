@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from notification.tasks import send_Org_notification
 
 from .services import Create_Workspace , Archive_Workspace
 from .selectors import get_workspace_for_org
@@ -24,5 +25,6 @@ class WorkspaceListCreateAPI(TenantAPIviews):
             name=request.data.get('name'),
         )
         serializer = WorkspaceOutputSerializer(workspace)
+        send_Org_notification.delay("title","workspace",request.organization.id)
         return Response(serializer.data,status=status.HTTP_201_CREATED)
 

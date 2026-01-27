@@ -5,7 +5,7 @@ from activities.services import log_Activity
 from common.exceptions import PermissionDenied
 
 def Create_Card(*,board,actor,assignee,serializer):
-    if actor.role not in ['owner','admin','member']:
+    if actor.role not in ['owner','admin']:
         raise PermissionDenied("you are not allowed to create cards")
 
     if board.is_archived:

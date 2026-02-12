@@ -1,0 +1,52 @@
+.subscription-card {
+    max-width: 520px;
+    margin: 3rem auto;
+}
+
+.subscription-form {
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+    outline: none;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+.summary-list {
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.summary-list li {
+    margin-bottom: 0.5rem;
+    color: var(--color-text-secondary);
+}

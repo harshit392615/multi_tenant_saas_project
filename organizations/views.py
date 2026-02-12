@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from common.exceptions import PermissionDenied
 from .selectors import get_org_for_user , get_memebrship_for_org
-from .services import Create_Org , Update_Org , Delete_Org , Archive_Org , Add_Update_Membership
+from .services import Create_Org , Update_Org , Delete_Org , Archive_Org , Add_Membership , Update_Membership , Add_Subscription , Verify_Subscription
 from .serializers import Organization_Create_Serializer , Organization_Update_Serializer , Organization_Archive_Serializer , Organization_Serializer , Membership_add_update , Membership_Get
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,6 +9,9 @@ from .models import Membership
 from django.http import HttpResponseForbidden
 from core.throttles import OrganizationThrottling
 from notification.tasks import send_user_notification
+from core.redis_sync import redis_client
+import json
+from django.shortcuts import render
 
 # Create your views here
 
@@ -84,6 +87,7 @@ class Organization_Membership_API(TenantAPIviews):
                 "username": membership.user.username,
                 "role": membership.role,
                 "email": membership.user.email,
+                "status": redis_client.exists(f"user:online:{membership.user.id}")
             }
             data.append(mem)
 
@@ -92,9 +96,32 @@ class Organization_Membership_API(TenantAPIviews):
     def post(self,request):
         serializer = Membership_add_update(data = request.data)
         if serializer.is_valid():
-            membership = Add_Update_Membership(request.membership , request.organization , serializer.validated_data)
+            membership = Add_Membership(request.membership , request.organization , serializer.validated_data)
             return Response(status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
+class Organization_Membership_Update_API(TenantAPIviews):
+    throttle_classes = [OrganizationThrottling]
+    def post(self,request):
+        serializer = Membership_add_update(data = request.data)
+        if serializer.is_valid():
+            membership = Update_Membership(request.membership , request.organization , serializer.validated_data)
+            return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-# add membership update api
+class Organization_Add_Subscription(TenantAPIviews):
+    def post(self , request):
+        data = json.loads(request.body)
+
+        context = Add_Subscription(request.user,request.membership , request.organization , data)
+
+        return Response(context , status=status.HTTP_201_CREATED)
+
+class Organization_Verify_Subscription(TenantAPIviews):
+    permission_classes = []
+    def post(self , request):
+        data = request.POST
+
+        Verify_Subscription(data)
+
+        return Response(status=status.HTTP_202_ACCEPTED)

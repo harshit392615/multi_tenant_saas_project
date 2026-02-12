@@ -528,3 +528,18 @@ tr:last-child td {
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
 }
+
+.role-cell {
+    cursor: pointer;
+}
+
+.role-select {
+    width: 100%;
+    padding: 4px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}

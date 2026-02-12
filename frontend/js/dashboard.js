@@ -36,7 +36,7 @@ async function fetchJSON(url, headers = {}) {
         }
 
         const refreshRes = await fetch(
-            "http://127.0.0.1:8000/api/auth/refresh/",
+            "http://192.168.1.2:8000/api/auth/refresh/",
             {
                 method: "POST",
                 headers: {

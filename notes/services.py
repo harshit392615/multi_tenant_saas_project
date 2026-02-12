@@ -17,3 +17,20 @@ def create_note(workspace_slug , actor , organization , serializer):
     )
 
     return note
+
+def update_note(note_id, ops):
+    content = ""
+
+    for op in ops:
+        pos = int(op["pos"])
+
+        if op["type"] == "insert":
+            content = content[:pos] + op["content"] + content[pos:]
+
+        elif op["type"] == "delete":
+            length = int(op["length"])
+            content = content[:pos] + content[pos + length:]
+
+    note = Notes.objects.get(id=note_id)
+    note.content = content
+    note.save()

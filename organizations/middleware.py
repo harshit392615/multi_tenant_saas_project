@@ -1,4 +1,4 @@
-from .models import Organization , Membership
+from .models import Organization , Membership , Subscription
 from django.http import HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
 
@@ -17,6 +17,11 @@ class TenantMiddleware(MiddlewareMixin):
             return HttpResponseForbidden('organization does not exist')
         
         request.organization = organization
+        try:
+            subscription = Subscription.objects.get(organization = organization)
+        except:
+            subscription = None
+        request.subscription = subscription
 
         if hasattr(request,'user') and request.user.is_authenticated:
             try:

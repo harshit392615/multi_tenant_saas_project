@@ -1,155 +1,205 @@
-    /**
-     * ==========================================
-     * SECTION 1: MANDATORY EXISTING LOGIC
-     * ⚠️ DO NOT MODIFY THIS BLOCK ⚠️
-     * ==========================================
-     */
+const API_BASE = "http://127.0.0.1:8000/api";
+const WS_BASE = "ws://127.0.0.1:8000/ws/notes/";
 
-    // Mocking fetchJSON for demonstration since API is not reachable here.
-    // In production, this wrapper is likely provided by the environment.
-    // I am assuming fetchJSON exists globally or is imported. 
-    // If not, this polyfill ensures the code runs for verification.
-
-    const API_BASE = "http://127.0.0.1:8000/api";
-    const workspaceSlug = localStorage.getItem("current_workspace");
+const workspaceSlug = localStorage.getItem("current_workspace");
 const orgSlug = localStorage.getItem("current_org");
-function getHeaders() {
-    const token = localStorage.getItem("access");
+const accessToken = localStorage.getItem("access");
 
-    if (!token || !orgSlug) {
-        throw new Error("Missing auth or org context");
-    }
+let socket = null;
+let docVersion = 0;
+let contentText = "";
+let applyingRemote = false;
 
+/* ================= HELPERS ================= */
+
+function headers() {
     return {
-        "Authorization": `Bearer ${token}`,
-        "X-ORG-SLUG": orgSlug
+        Authorization: `Bearer ${accessToken}`,
+        "X-ORG-SLUG": orgSlug,
     };
 }
 
-async function fetchJSON(url) {
-    const response = await fetch(url, {
-        headers: getHeaders()
-    });
+async function fetchNotes() {
+    const res = await fetch(
+        `${API_BASE}/notes/workspaces/${workspaceSlug}/notes/`,
+        { headers: headers() }
+    );
+    return res.json();
+}
 
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+function getCaretOffset(el) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return 0;
+
+    const range = sel.getRangeAt(0);
+    let count = 0;
+
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+        if (node === range.startContainer) {
+            return count + range.startOffset;
+        }
+        count += node.textContent.length;
+    }
+    return count;
+}
+function setCaretOffset(el, offset) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+
+    let count = 0;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let node;
+
+    while ((node = walker.nextNode())) {
+        if (count + node.length >= offset) {
+            range.setStart(node, offset - count);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            return;
+        }
+        count += node.length;
+    }
+}
+
+
+
+/* ================= RENDER ================= */
+
+function render(preserveCaret = true) {
+    const el = document.getElementById("note-display-body");
+
+    let caret = null;
+    if (preserveCaret) {
+        caret = getCaretOffset(el);
     }
 
-    return response.json();
+    el.textContent = contentText;
+
+    if (caret !== null) {
+        setCaretOffset(el, Math.min(caret, contentText.length));
+    }
 }
 
-    function fetchNotes() {
-    return fetchJSON(`${API_BASE}/notes/workspaces/${workspaceSlug}/notes/`);
+
+/* ================= OT ================= */
+
+function applyOp(op) {
+    if (op.type === "insert") {
+        contentText =
+            contentText.slice(0, op.pos) +
+            op.content +
+            contentText.slice(op.pos);
+    }
+
+    if (op.type === "delete") {
+        contentText =
+            contentText.slice(0, op.pos) +
+            contentText.slice(op.pos + op.length);
+    }
+
+    docVersion = op.version;
 }
 
-    function renderNotes(notes) {
+/* ================= SOCKET ================= */
+
+function connect(noteId) {
+    if (socket) socket.close();
+
+    socket = new WebSocket(`${WS_BASE}?note_id=${noteId}&token=${accessToken}`);
+    contentText = "";
+    docVersion = 0;
+
+    socket.onmessage = e => {
+        const data = JSON.parse(e.data);
+
+        if (data.type === "init") {
+            contentText = "";
+            data.ops
+                .sort((a, b) => a.version - b.version)
+                .forEach(applyOp);
+
+            docVersion = data.doc_version;
+
+            document.getElementById("empty-state").style.display = "none";
+            document.getElementById("editor-view").classList.remove("hidden");
+
+            render();
+            document.getElementById("note-display-body").focus();
+        }
+
+        if (data.type === "insert" || data.type === "delete") {
+            applyingRemote = true;
+            applyOp(data);
+            render();
+            applyingRemote = false;
+        }
+    };
+}
+
+/* ================= EDITOR ================= */
+
+function setupEditor() {
+    const el = document.getElementById("note-display-body");
+
+    el.addEventListener("beforeinput", e => {
+        if (!socket || applyingRemote) return;
+
+        e.preventDefault();
+
+        const caret = getCaretOffset(el);
+
+        if (e.inputType === "insertText") {
+            const op = {
+                type: "insert",
+                pos: caret,
+                content: e.data,
+                base_version: docVersion
+            };
+
+            contentText =
+                contentText.slice(0, caret) +
+                e.data +
+                contentText.slice(caret);
+
+            render(true);
+            socket.send(JSON.stringify(op));
+        }
+
+        if (e.inputType === "deleteContentBackward" && caret > 0) {
+            const op = {
+                type: "delete",
+                pos: caret - 1,
+                length: 1,
+                base_version: docVersion
+            };
+
+            contentText =
+                contentText.slice(0, caret - 1) +
+                contentText.slice(caret);
+
+            render(true);
+            socket.send(JSON.stringify(op));
+        }
+    });
+}
+
+
+/* ================= BOOTSTRAP ================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+    setupEditor();
+
+    const notes = await fetchNotes();
     const list = document.getElementById("notes-list");
     list.innerHTML = "";
 
-    if (!notes.length) {
-        list.innerHTML = "<li>No notes found</li>";
-        return;
-    }
-
-    notes.forEach(note => {
+    notes.forEach(n => {
         const li = document.createElement("li");
-        li.innerHTML = `
-            <strong>${note.title}</strong><br>
-            ${note.content}
-        `;
-        li.dataset.slug = note.slug
+        li.textContent = n.title || "Untitled";
+        li.onclick = () => connect(n.id);
         list.appendChild(li);
     });
-}
-
-    /**
-     * ==========================================
-     * SECTION 2: SAFE UI ENHANCEMENTS
-     * Additive logic to handle Split View interactions
-     * ==========================================
-     */
-
-    document.addEventListener("DOMContentLoaded", () => {
-        
-        // 1. Initialize data
-        initNotesPage();
-
-        // 2. Set up Event Delegation
-        // We listen on the parent #notes-list because renderNotes() wipes the children.
-        const notesListEl = document.getElementById("notes-list");
-        
-        notesListEl.addEventListener("click", (e) => {
-            // Find the closest list item clicked
-            const li = e.target.closest("li");
-            
-            // Validation: Must be an LI and must have data (ignore "No notes found")
-            if (!li || !li.dataset.slug) return;
-
-            handleNoteSelection(li);
-        });
-    });
-
-    async function initNotesPage() {
-        try {
-            const notes = await fetchNotes();
-            renderNotes(notes);
-            
-            // Optional: Auto-select first note if available (UX improvement)
-            const firstNote = document.querySelector("#notes-list li[data-slug]");
-            if(firstNote) {
-                // Uncomment line below to auto-open first note
-                // handleNoteSelection(firstNote);
-            }
-        } catch (error) {
-            console.error("Failed to load notes", error);
-            document.getElementById("notes-list").innerHTML = "<li style='color:red; padding:12px;'>Error loading notes.</li>";
-        }
-    }
-
-    function handleNoteSelection(liElement) {
-        // A. Visual Selection Logic
-        // Remove active class from all items
-        document.querySelectorAll("#notes-list li").forEach(el => el.classList.remove("active-note"));
-        // Add active class to clicked item
-        liElement.classList.add("active-note");
-
-        // B. Data Extraction Logic
-        // Since we cannot modify the Note Object logic, we parse the rendered DOM 
-        // which serves as our source of truth here.
-        
-        const titleEl = liElement.querySelector("strong");
-        // We get the HTML content. 
-        // Note: The existing logic puts Title + <br> + Content in the LI.
-        // We need to carefully extract just the content part to avoid duplicating the title in the view.
-        
-        const rawHTML = liElement.innerHTML;
-        const titleText = titleEl ? titleEl.innerText : "Untitled";
-        
-        // Split on the first <br> to separate Title from Content roughly, 
-        // or just use the full innerHTML minus the strong tag.
-        // A robust way using DOM nodes:
-        const clone = liElement.cloneNode(true);
-        const strongInClone = clone.querySelector("strong");
-        if(strongInClone) strongInClone.remove(); // Remove title from body content
-        
-        // Clean up leading <br> tags left over from the original template
-        let contentHtml = clone.innerHTML.trim();
-        while(contentHtml.startsWith("<br>")) {
-            contentHtml = contentHtml.substring(4).trim();
-        }
-
-        // C. Populate View Pane
-        const viewContainer = document.getElementById("active-note-view");
-        const emptyState = document.getElementById("empty-state");
-        const displayTitle = document.getElementById("note-display-title");
-        const displayBody = document.getElementById("note-display-body");
-
-        // Toggle visibility
-        emptyState.classList.add("hidden");
-        viewContainer.classList.remove("hidden");
-
-        // Inject Content
-        displayTitle.innerText = titleText;
-        displayBody.innerHTML = contentHtml;
-    }
-    
+});

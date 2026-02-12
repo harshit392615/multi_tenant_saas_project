@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Organization , Membership
+from .models import Organization , Membership , Subscription
 # Register your models here.
 
 @admin.register(Organization)
@@ -7,6 +7,9 @@ class Organization(admin.ModelAdmin):
     list_display = ['name','slug','is_deleted','is_archived' , 'slug']
 
 @admin.register(Membership)
-
 class Membership(admin.ModelAdmin):
     list_display = ["organization" , "user" , 'role']
+
+@admin.register(Subscription)
+class Membership(admin.ModelAdmin):
+    list_display = ["organization" , "title" , 'duration' , 'is_active']

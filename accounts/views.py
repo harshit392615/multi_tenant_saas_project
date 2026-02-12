@@ -6,6 +6,10 @@ from rest_framework import status
 from .services import send_verification ,Email_verifier
 from django.urls import reverse
 from .tasks import send_verification_email
+from core.auth import authenticate_bearer_by_token
+from .selectors import get_status
+from django.http import StreamingHttpResponse , HttpResponseForbidden
+
 # Create your views here.
 
 class LoginAPI(TokenObtainPairView):
@@ -33,3 +37,22 @@ class EmailVerifyAPI(APIView):
         Email_verifier(uidb64=uidb64 , token=token)
         
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+def Get_User_Activity(request):
+    token = request.GET.get('token')
+    print(token)
+    try:
+        user = authenticate_bearer_by_token(token)
+        print(user)
+    except Exception:
+        return HttpResponseForbidden("Unauthorized")
+
+    response = StreamingHttpResponse(
+        get_status(user),
+        content_type="text/event-stream"
+    )
+    response["Cache-Control"] = "no-cache"
+    response["Connection"] = "keep-alive"
+    response["X-Accel-Buffering"] = "no"
+    return response

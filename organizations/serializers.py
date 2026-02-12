@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Organization , Membership
+from .models import Organization , Membership , Subscription
 
 class Organization_Create_Serializer(serializers.Serializer):
     name = serializers.CharField()
@@ -37,3 +37,4 @@ class Membership_Get(serializers.Serializer):
         ]
     )
     email = serializers.EmailField()
+    status = serializers.IntegerField()

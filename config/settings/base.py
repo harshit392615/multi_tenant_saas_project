@@ -17,6 +17,8 @@ from datetime import timedelta
 import django_redis 
 from corsheaders.defaults import default_headers
 import django_extensions
+import channels
+import channels_redis
 
 load_dotenv()
 
@@ -63,6 +65,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'notes',
     'notification',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -96,6 +99,7 @@ TEMPLATES = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
+    "http://192.168.1.2:5500"
 ]
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-ORG-SLUG",
@@ -104,6 +108,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
+    "http://192.168.1.2:5500"
 ]
 
 
@@ -171,7 +176,10 @@ REST_FRAMEWORK = {
             'core.throttles.OrganizationThrottling',  
         ],
         'DEFAULT_THROTTLE_RATES':{ # throttling limit
-            'organization':'1000/hour',
+            'free':'200/hour',
+            'basic':'30/hour',
+            'standard':'40/hour',
+            'premium':'50/hour'
         }
 
 }
@@ -208,3 +216,15 @@ CACHE = {    # cache configurations
 
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+
+CHANNEL_LAYERS = {
+    "default":{
+        "BACKEND":"channels_redis.core.RedisChannelLayer",
+        "CONFIG":{
+            "hosts":[("127.0.0.1",6379)]
+        },
+    },
+}
+
+PAYU_KEY = os.getenv("PAYU_KEY")
+PAYU_SALT = os.getenv("PAYU_SALT")

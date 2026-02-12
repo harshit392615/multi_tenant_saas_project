@@ -2,7 +2,7 @@ from .models import UserNotification
 from .publisher import publish_notification
 from accounts.models import User
 from organizations.models import Organization
-from asgiref.sync import async_to_sync
+
 
 
 def Create_Org_Notifications(title , description , organization_id):

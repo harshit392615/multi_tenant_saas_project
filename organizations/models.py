@@ -1,6 +1,8 @@
 from django.db import models
 import uuid
 from autoslug import AutoSlugField
+from django.utils import timezone
+from datetime import timedelta
 # Create your models here.
 
 class Organization(models.Model):
@@ -35,3 +37,36 @@ class Membership(models.Model):
         unique_together = ('user' , 'organization')
 
 
+class Subscription(models.Model):
+    TITLE = [
+        ('basic' , "Basic"),
+        ('standard' , "Standard"),
+        ("premium" , "Premium")
+    ]
+    title = models.CharField(choices=TITLE)
+    PRICE = [
+        (500,500),
+        (1000,1000),
+        (5000,5000)
+    ]
+    price = models.IntegerField(choices=PRICE)
+    RATE_LIMIT = [
+        ("10/hour","10/hour"),
+        ("15/hour","15/hour"),
+        ("20/hour","20/hour")
+    ]
+    rate_limit = models.CharField(choices=RATE_LIMIT)
+    DURATION = [
+        (30,30),
+        (60,60),
+        (365,365)
+    ]
+    duration = models.IntegerField(choices=DURATION)
+    organization = models.ForeignKey(Organization , on_delete=models.CASCADE , unique=True)
+    start_date = models.DateField(auto_now_add=True)
+    is_active = models.BooleanField(default=False)
+    txnid = models.CharField()
+    
+    @property
+    def subscription_status(self):
+        return self.start_date + timedelta(days=self.duration) > timezone.now() 

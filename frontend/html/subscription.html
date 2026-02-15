@@ -2,81 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus | Subscription</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Reuse org dashboard theme -->
-    <link rel="stylesheet" href="../css/org_dashboard.css">
+    <title>Subscription | Nexus</title>
     <link rel="stylesheet" href="../css/subscription.css">
 </head>
 <body>
 
-<main class="main-content">
-    <!-- Header -->
-    <header class="top-header">
-        <div class="header-titles">
-            <span class="breadcrumb">Nexus / Organization</span>
-            <h1>Subscription & Billing</h1>
-        </div>
-    </header>
+<h2>Select Subscription Plan</h2>
 
-    <!-- Subscription Card -->
-    <section class="card subscription-card">
-        <h2>Choose a Plan</h2>
-        <p class="muted-text">
-            Select a subscription plan to continue.
-        </p>
+<div id="errorBox" style="color:red; margin-bottom:10px;"></div>
 
-        <form id="subscription-form" class="subscription-form">
+<select id="plan">
+    <option value="">-- Select Plan --</option>
+    <option value="basic">Basic</option>
+    <option value="standard">Standard</option>
+    <option value="premium">Premium</option>
+</select>
 
-            <div class="form-group">
-                <label>First Name</label>
-                <input type="text" name="firstname" required />
-            </div>
+<button id="generateBtn">
+    Continue to Payment
+</button>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" required />
-            </div>
-
-            <div class="form-group">
-                <label>Subscription Plan</label>
-                <select name="title" required>
-                    <option value="basic">Basic</option>
-                    <option value="standard">Standard</option>
-                    <option value="premium">Premium</option>
-                </select>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" id="proceed-btn">
-                    Proceed to Payment
-                </button>
-            </div>
-
-        </form>
-    </section>
-</main>
-<div id="payment-confirmation" class="card subscription-card" style="display:none;">
-    <h2>Confirm Payment</h2>
-
-    <p class="muted-text">
-        Your subscription is ready. Click below to continue to payment.
-    </p>
-
-    <ul class="summary-list">
-        <li><strong>Plan:</strong> <span id="summary-plan"></span></li>
-        <li><strong>Email:</strong> <span id="summary-email"></span></li>
-    </ul>
-
-    <div class="form-actions">
-        <button id="pay-now-btn" type="button" class="btn btn-primary">
-            Pay Now
-        </button>
-    </div>
+<div id="paySection" style="display:none; margin-top:20px;">
+    <button type="button" id="confirmPaymentBtn">
+        Proceed to Payment
+    </button>
 </div>
 
-
-<script defer src="../js/subscription.js"></script>
+<script src="../js/subscription.js"></script>
 </body>
 </html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to Payment...</title>
+</head>
+<body>
+
+<p>Redirecting to secure payment page...</p>
+
+<form id="payuForm" method="POST" action="{{ payu_url }}">
+    <input type="hidden" name="key" value="{{ key }}">
+    <input type="hidden" name="txnid" value="{{ txnid }}">
+    <input type="hidden" name="amount" value="{{ amount }}">
+    <input type="hidden" name="productinfo" value="{{ productinfo }}">
+    <input type="hidden" name="firstname" value="{{ firstname }}">
+    <input type="hidden" name="email" value="{{ email }}">
+    <input type="hidden" name="phone" value="{{ phone }}">
+    <input type="hidden" name="surl" value="{{ surl }}">
+    <input type="hidden" name="furl" value="{{ furl }}">
+    <input type="hidden" name="hash" value="{{ hash }}">
+</form>
+
+<script>
+    document.getElementById("payuForm").submit();
+</script>
+
+</body>
+</html>

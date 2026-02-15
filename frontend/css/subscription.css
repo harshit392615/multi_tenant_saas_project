@@ -1,52 +1,70 @@
-.subscription-card {
-    max-width: 520px;
-    margin: 3rem auto;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-.subscription-form {
-    margin-top: 1.5rem;
+body {
+    background: #f5f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+    font-size: 20px;
 }
 
 .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.2rem;
 }
 
-.form-group label {
+label {
     display: block;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 6px;
+    font-size: 14px;
 }
 
-.form-group input,
-.form-group select {
+select {
     width: 100%;
-    padding: 0.75rem;
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-text-primary);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 1px var(--color-accent);
-    outline: none;
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #111;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-.form-actions {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: flex-end;
-}
-.summary-list {
-    margin: 1.5rem 0;
-    padding: 0;
-    list-style: none;
+.btn:disabled {
+    background: #666;
+    cursor: not-allowed;
 }
 
-.summary-list li {
-    margin-bottom: 0.5rem;
-    color: var(--color-text-secondary);
+.error {
+    margin-top: 1rem;
+    color: red;
+    font-size: 14px;
 }

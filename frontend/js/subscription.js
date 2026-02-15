@@ -1,93 +1,94 @@
-window.addEventListener("beforeunload", function (e) {
-    console.log("UNLOAD TRIGGERED");
-});
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("SUBSCRIPTION JS LOADED");
+    const API_URL = "http://127.0.0.1:8000/api/organization/subscription/";
 
-    const CONFIG = {
-        API_BASE: "http://127.0.0.1:8000/api/organization",
-        SUBSCRIPTION_ENDPOINT: "/subscription/"
-    };
+    const generateBtn = document.getElementById("generateBtn");
+    const confirmBtn = document.getElementById("confirmPaymentBtn");
+    const paySection = document.getElementById("paySection");
+    const errorBox = document.getElementById("errorBox");
 
-    let payuPayload = null;
+    let paymentPayload = null;
 
-    function authHeaders(extra = {}) {
+    generateBtn.addEventListener("click", async () => {
+
+        errorBox.textContent = "";
+
         const token = localStorage.getItem("access");
-        return token
-            ? { Authorization: `Bearer ${token}`, ...extra }
-            : extra;
-    }
-
-    const proceedBtn = document.getElementById("proceed-btn");
-    const payNowBtn = document.getElementById("pay-now-btn");
-
-    proceedBtn.addEventListener("click", async function () {
-
-        console.log("Proceed clicked");
-
-        const firstname = document.querySelector("input[name='firstname']").value.trim();
-        const email = document.querySelector("input[name='email']").value.trim();
-        const title = document.querySelector("select[name='title']").value;
-
         const orgSlug = localStorage.getItem("current_org");
-        if (!orgSlug) {
-            alert("Organization not selected");
+        const title = document.getElementById("plan").value;
+
+        if (!token || !orgSlug) {
+            errorBox.textContent = "Authentication required.";
+            return;
+        }
+
+        if (!title) {
+            errorBox.textContent = "Please select a subscription plan.";
             return;
         }
 
         try {
-            const res = await fetch(
-                `${CONFIG.API_BASE}${CONFIG.SUBSCRIPTION_ENDPOINT}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...authHeaders({ "X-ORG-SLUG": orgSlug })
-                    },
-                    body: JSON.stringify({ firstname, email, title })
-                }
-            );
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            generateBtn.disabled = true;
+            generateBtn.textContent = "Processing...";
 
-            payuPayload = await res.json();
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                    "X-ORG-SLUG": orgSlug
+                },
+                body: JSON.stringify({ title })
+            });
 
-            document.getElementById("summary-plan").textContent = title;
-            document.getElementById("summary-email").textContent = email;
+            if (!response.ok) {
+                throw new Error("Failed to initiate payment");
+            }
 
-            document.querySelector(".subscription-card").style.display = "none";
-            document.getElementById("payment-confirmation").style.display = "block";
+            paymentPayload = await response.json();
 
-        } catch (err) {
-            console.error("Subscription initiation failed:", err);
-            alert("Failed to initiate payment");
+            paySection.style.display = "block";
+
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Continue to Payment";
+
+        } catch (error) {
+            errorBox.textContent = error.message;
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Continue to Payment";
         }
     });
 
-    payNowBtn.addEventListener("click", function () {
+    confirmBtn.addEventListener("click", () => {
 
-        if (!payuPayload) {
-            alert("Payment data missing");
+        if (!paymentPayload) {
+            errorBox.textContent = "Payment session not initialized.";
             return;
         }
 
-        const payuForm = document.createElement("form");
-        payuForm.method = "POST";
-        payuForm.action = payuPayload.payu_url;
+        redirectToPayment(paymentPayload);
+    });
 
-        Object.keys(payuPayload).forEach(key => {
+    function redirectToPayment(payload) {
+
+        // FORM USED ONLY FOR PAYU REDIRECTION
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = payload.payu_url;
+
+        Object.keys(payload).forEach(key => {
             if (key === "payu_url") return;
 
             const input = document.createElement("input");
             input.type = "hidden";
             input.name = key;
-            input.value = payuPayload[key];
-            payuForm.appendChild(input);
+            input.value = payload[key];
+            form.appendChild(input);
         });
 
-        document.body.appendChild(payuForm);
-        payuForm.submit();
-    });
+        document.body.appendChild(form);
+        form.submit();
+    }
 
 });

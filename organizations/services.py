@@ -110,6 +110,7 @@ def Add_Subscription(user , actor , organization , data):
         raise PermissionError("you are not allowed to make this request")
     
     firstname = user.username
+    email = user.email
     
     if data['title'] not in ['basic','standard','premium']:
         raise ValidationError("invalid subscription")
@@ -134,21 +135,21 @@ def Add_Subscription(user , actor , organization , data):
         }
     }
 
-    hash_str = f"{key}|{txnid}|{subs[data['title']]['price']}|subscription|{firstname}|{data['email']}|||||||||||{salt}"
+    hash_str = f"{key}|{txnid}|{subs[data['title']]['price']}|subscription|{firstname}|{email}|||||||||||{salt}"
 
     
     hash = hashlib.sha512(hash_str.encode()).hexdigest()
 
     
-    Subscription.objects.create(
-        organization = organization,
-        title = data['title'],
-        price = subs[data['title']]['price'],
-        rate_limit = subs[data['title']]['rate_limit'],
-        duration = subs[data['title']]['duration'],
-        txnid = txnid,
-        is_active = False
-    )
+    # Subscription.objects.create(
+    #     organization = organization,
+    #     title = data['title'],
+    #     price = subs[data['title']]['price'],
+    #     rate_limit = subs[data['title']]['rate_limit'],
+    #     duration = subs[data['title']]['duration'],
+    #     txnid = txnid,
+    #     is_active = False
+    # )
     
     context = {
             "payu_url": "https://test.payu.in/_payment",
@@ -157,9 +158,9 @@ def Add_Subscription(user , actor , organization , data):
             "amount": subs[data['title']]['price'],
             "productinfo": "subscription",
             "firstname": firstname,
-            "email": data['email'],
+            "email": email,
             "phone": "9999999999",
-            "surl": "http://10.164.97.174:8000/api/organization/subscription/verify/",
+            "surl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
             "furl": "http://127.0.0.1:5500/multi_tenant_saas_project/frontend/html/login.html",
             "hash": hash,
         }

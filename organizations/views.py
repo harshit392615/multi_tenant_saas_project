@@ -97,7 +97,7 @@ class Organization_Membership_API(TenantAPIviews):
         serializer = Membership_add_update(data = request.data)
         if serializer.is_valid():
             membership = Add_Membership(request.membership , request.organization , serializer.validated_data)
-            return Response(status=status.HTTP_202_ACCEPTED)
+            return Response({"message": "Member added successfully"},status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
 class Organization_Membership_Update_API(TenantAPIviews):

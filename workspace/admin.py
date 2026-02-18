@@ -4,4 +4,4 @@ from .models import Workspace
 
 @admin.register(Workspace)
 class Workspace(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name','is_deleted']

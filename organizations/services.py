@@ -40,14 +40,15 @@ def Delete_Org(*,id,actor):
     
     try:
         organization = Organization.objects.get(
-            id = id
+            id = id 
         )
-    except Organization.DoesNotExist:
+    except Organization.DoesNotExist: 
         raise ValidationError("invalid organization id")
     
     organization.is_deleted =  True
 
     organization.save(update_fields=['is_deleted'])
+    return 1
 
 def Archive_Org(*,slug,actor):
     if actor.role not in ['owner','admin']:
@@ -141,15 +142,15 @@ def Add_Subscription(user , actor , organization , data):
     hash = hashlib.sha512(hash_str.encode()).hexdigest()
 
     
-    # Subscription.objects.create(
-    #     organization = organization,
-    #     title = data['title'],
-    #     price = subs[data['title']]['price'],
-    #     rate_limit = subs[data['title']]['rate_limit'],
-    #     duration = subs[data['title']]['duration'],
-    #     txnid = txnid,
-    #     is_active = False
-    # )
+    Subscription.objects.create(
+        organization = organization,
+        title = data['title'],
+        price = subs[data['title']]['price'],
+        rate_limit = subs[data['title']]['rate_limit'],
+        duration = subs[data['title']]['duration'],
+        txnid = txnid,
+        is_active = False
+    )
     
     context = {
             "payu_url": "https://test.payu.in/_payment",

@@ -106,6 +106,8 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -125,10 +127,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -179,10 +186,10 @@ REST_FRAMEWORK = {
             'core.throttles.OrganizationThrottling',  
         ],
         'DEFAULT_THROTTLE_RATES':{ # throttling limit
-            'free':'200/hour',
-            'basic':'30/hour',
-            'standard':'40/hour',
-            'premium':'50/hour'
+            'free':'100/hour',
+            'basic':'200/hour',
+            'standard':'500/hour',
+            'premium':'1000/hour'
         }
 
 }

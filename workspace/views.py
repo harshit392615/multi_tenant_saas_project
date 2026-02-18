@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from notification.tasks import send_Org_notification
 
-from .services import Create_Workspace , Archive_Workspace
+from .services import Create_Workspace , Archive_Workspace , Delete_Workspace
 from .selectors import get_workspace_for_org
 from .serializers import WorkspaceCreateSerializer , WorkspaceOutputSerializer
 from core.throttles import OrganizationThrottling
@@ -28,3 +28,11 @@ class WorkspaceListCreateAPI(TenantAPIviews):
         send_Org_notification.delay("title","workspace",request.organization.id)
         return Response(serializer.data,status=status.HTTP_201_CREATED)
 
+class Workspace_Delete_API(TenantAPIviews):
+    throttle_classes = [OrganizationThrottling]
+    def delete(self , request , workspace_id):
+        try:
+            Delete_Workspace(id=workspace_id , actor=request.membership)
+            return Response(status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_400_BAD_REQUEST)

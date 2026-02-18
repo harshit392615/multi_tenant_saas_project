@@ -34,3 +34,19 @@ def update_note(note_id, ops):
     note = Notes.objects.get(id=note_id)
     note.content = content
     note.save()
+
+def Delete_Note(*,id,actor):
+    if actor.role not in ['owner','admin']:
+        raise PermissionDenied("you are not allowed to perform this action")
+    
+    try:
+        note = Notes.objects.get(
+            id = id 
+        )
+    except Notes.DoesNotExist: 
+        raise ValidationError("invalid organization id")
+    
+    note.is_deleted =  True
+
+    note.save(update_fields=['is_deleted'])
+    return 1

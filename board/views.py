@@ -5,7 +5,7 @@ from rest_framework import status
 from .models import Board
 from organizations.views import TenantAPIviews
 from workspace.models import Workspace
-from .services import Create_Board
+from .services import Create_Board , Delete_Board
 from .selectors import get_boards_for_workspace
 from core.throttles import OrganizationThrottling
 from .serializers import BoardSerializer , BoardCreateSerializer
@@ -25,3 +25,11 @@ class BoardListCreateAPI(TenantAPIviews):
         serializer = BoardCreateSerializer(board)
         return Response(serializer.data , status=status.HTTP_201_CREATED)
 
+class Board_Delete_API(TenantAPIviews):
+    throttle_classes = [OrganizationThrottling]
+    def delete(self , request , board_id):
+        try:
+            Delete_Board(id=board_id , actor=request.membership)
+            return Response(status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            return Response({'error' : str(e)},status=status.HTTP_400_BAD_REQUEST)

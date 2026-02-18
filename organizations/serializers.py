@@ -8,6 +8,7 @@ class Organization_Create_Serializer(serializers.Serializer):
     )
 
 class Organization_Serializer(serializers.Serializer):
+    id = serializers.UUIDField()
     name = serializers.CharField()
     slug = serializers.CharField()
     type = serializers.ChoiceField(

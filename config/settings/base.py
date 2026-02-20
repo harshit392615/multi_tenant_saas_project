@@ -16,7 +16,6 @@ import os
 from datetime import timedelta
 import django_redis 
 from corsheaders.defaults import default_headers
-import django_extensions
 import channels
 import channels_redis
 import dj_database_url
@@ -64,7 +63,6 @@ INSTALLED_APPS = [
     'invitations',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'django_extensions',
     'notes',
     'notification',
     'channels'

@@ -14,9 +14,11 @@ from channels.routing import ProtocolTypeRouter , URLRouter
 import notes.routing 
 from channels.auth import AuthMiddlewareStack
 from core.middleware import JWTAuthenticationMiddleware , OrganizationMiddleware
+from dotenv import load_dotenv
 
+load_dotenv()
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.base')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.getenv("DJANGO_SETTINGS_FILE"))
 
 application = ProtocolTypeRouter({
     "http":get_asgi_application(),

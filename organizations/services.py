@@ -161,8 +161,8 @@ def Add_Subscription(user , actor , organization , data):
             "firstname": firstname,
             "email": email,
             "phone": "9999999999",
-            "surl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
-            "furl": "http://127.0.0.1:5500/multi_tenant_saas_project/frontend/html/login.html",
+            "surl": "https://multi-tenant-saas-project-frontend.vercel.app/html/payment-verified.html",
+            "furl": "https://multi-tenant-saas-project-frontend.vercel.app/html/payment-declined.html",
             "hash": hash,
         }
     return context

@@ -207,11 +207,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+REDIS_LOCATION = os.getenv("REDIS_LOCATION")
 
 CACHE = {    # cache configurations
     'default' : {
         'BACKEND' : 'django_redis.cache.RedisCache',
-        'LOCATION' : os.getenv("REDIS_LOCATION"),
+        'LOCATION' : REDIS_LOCATION,
         'OPTIONS':{
             'CLIENT_CLASS':'django_redis.client.DefaultClient',
         },
@@ -225,7 +226,7 @@ CHANNEL_LAYERS = {
     "default":{
         "BACKEND":"channels_redis.core.RedisChannelLayer",
         "CONFIG":{
-            "hosts":[(os.getenv("REDIS_HOST"),os.getenv("REDIS_PORT"))]
+            "hosts":[REDIS_LOCATION],
         },
     },
 }

@@ -6,7 +6,7 @@ from common.exceptions import ValidationError
 from .models import Card
 from board.models import Board
 from .selectors import get_card_for_board
-from .services import Create_Card , Update_Card
+from .services import Create_Card , Update_Card , Delete_card
 from .serializers import CardSerializer , CardCreateSerializer
 from organizations.views import TenantAPIviews
 # Create your views here.
@@ -52,3 +52,10 @@ class CardUpdateAPI(TenantAPIviews):
             serializer = CardSerializer(card)
 
             return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
+        
+class CardDeleteAPI(TenantAPIviews):
+    def delete(self , request , card_id):
+
+        Delete_card(id = card_id , actor = request.membership)
+
+        return Response({"message": "Card deleted successfully"}, status=status.HTTP_202_ACCEPTED)

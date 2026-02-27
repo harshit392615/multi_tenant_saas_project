@@ -56,6 +56,28 @@ def Update_Card(* ,slug,actor,serializer):
 
     return card
 
+def Delete_card(*,id,actor):
+    if actor.role not in ['owner','admin']:
+        raise PermissionDenied("You are not allowed to delete cards")
+    
+    card = Card.objects.get(
+        id = id
+    )
+
+    card.is_deleted = True
+
+    card.save() 
+    
+    log_Activity(
+        organization=card.organization,
+        actor=actor,
+        action="card_Deleted",
+        entity_type='card',
+        entity_id=card.id,
+        metadata={'title':card.title},
+    )
+
+    return 1
     
 def Archive_Card(*,card,actor):
     if actor.role not in ['owner','admin','member']:

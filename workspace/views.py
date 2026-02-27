@@ -33,6 +33,6 @@ class Workspace_Delete_API(TenantAPIviews):
     def delete(self , request , workspace_id):
         try:
             Delete_Workspace(id=workspace_id , actor=request.membership)
-            return Response(status=status.HTTP_202_ACCEPTED)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_400_BAD_REQUEST)

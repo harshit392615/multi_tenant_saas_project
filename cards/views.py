@@ -58,4 +58,4 @@ class CardDeleteAPI(TenantAPIviews):
 
         Delete_card(id = card_id , actor = request.membership)
 
-        return Response({"message": "Card deleted successfully"}, status=status.HTTP_202_ACCEPTED)
+        return Response({"message": "Card deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

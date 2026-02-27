@@ -1,8 +1,8 @@
 from django.urls import path 
-from .views import CardListCreateAPI , CardUpdateAPI
+from .views import CardDeleteAPI, CardListCreateAPI , CardUpdateAPI
 
 urlpatterns = [
     path('boards/<str:board_slug>/cards/', CardListCreateAPI.as_view() , name='cardlist'),
     path('boards/<str:card_slug>/update/', CardUpdateAPI.as_view() , name='cardupdate'),
-    path('boards/<int:card_id>/delete/', CardUpdateAPI.as_view() , name='carddelete'),
+    path('boards/<int:card_id>/delete/', CardDeleteAPI.as_view() , name='carddelete'),
 ]

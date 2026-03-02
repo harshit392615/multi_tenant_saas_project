@@ -35,3 +35,7 @@ def get_org_subscription(actor , organization):
         }
     return subscription
 
+def get_active_users(user , organization):
+    memberships = Membership.objects.filter(
+        organization = organization
+    )

@@ -13,7 +13,9 @@ from core.redis_sync import redis_client
 import json
 from django.shortcuts import render
 from django.shortcuts import redirect
-
+from core.auth import authenticate_bearer_by_token
+from django.http import StreamingHttpResponse , HttpResponseForbidden
+\
 # Create your views here
 
 class TenantAPIviews(APIView):
@@ -140,3 +142,22 @@ class Organization_Verify_Subscription(TenantAPIviews):
         url = Verify_Subscription(data)
 
         return redirect(url)
+    
+# def Get_Active_user(request):
+#     token = request.GET.get('token')
+#     print(token)
+#     try:
+#         user = authenticate_bearer_by_token(token)
+#     except Exception:
+#         return HttpResponseForbidden("Unauthorized")
+
+#     response = StreamingHttpResponse(
+#         get_active_users(user),
+#         content_type="text/event-stream"
+#     )
+#     response["Cache-Control"] = "no-cache"
+#     response["Connection"] = "keep-alive"
+#     response["X-Accel-Buffering"] = "no"
+#     return response
+
+### make a json object in redis cache in which active user of a organization will be store and using sse that json will be sended to frontend where all status of user in that jsonn will se setted active else inactive  

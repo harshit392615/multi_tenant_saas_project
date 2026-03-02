@@ -27,5 +27,5 @@ urlpatterns = [
     path('api/invites/',include('invitations.urls')),
     path('api/organization/',include('organizations.urls')),
     path('api/notes/' , include('notes.urls')),
-    path('api/' , include('notification.urls')),
+    path('api/notification/' , include('notification.urls')),
 ]

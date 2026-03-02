@@ -6,7 +6,7 @@ class TenantMiddleware(MiddlewareMixin):
     def process_view(self,request,view_func,view_args,view_kwargs):
         org_slug = request.headers.get("X-ORG-SLUG")
 
-        if not org_slug:
+        if not org_slug or org_slug in ['undefined' , 'null']:
             request.organization = None
             request.membership = None
             return None

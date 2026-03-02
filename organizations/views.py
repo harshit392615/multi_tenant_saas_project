@@ -1,3 +1,4 @@
+from httpx import request
 from rest_framework.views import APIView
 from common.exceptions import PermissionDenied
 from .selectors import get_org_for_user , get_memebrship_for_org , get_org_subscription
@@ -33,11 +34,9 @@ class TenantAPIviews(APIView):
             return PermissionDenied("you cannot access this organization")
         
 class Organization_List_API(APIView):
-    throttle_classes = [OrganizationThrottling]
     def get(self , request):
         qs = get_org_for_user(user=request.user)
         serializer = Organization_Serializer(qs ,  many = True)
-        # send_user_notification.delay("title" , "description" , request.user.id)
         return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
     
 class Organization_Create_API(APIView):

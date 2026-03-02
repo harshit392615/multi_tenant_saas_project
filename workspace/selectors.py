@@ -24,12 +24,15 @@ def get_workspace_by_slug(*,workspace_slug,organization):
     if cached:
         return cached
 
-    workspace = Workspace.objects.filter(
-        organization = organization,
-        slug = workspace_slug,
-        is_archived = False,
-        is_deleted = False,
-    ).first()
+    try:
+        workspace = Workspace.objects.filter(
+            organization = organization,
+            slug = workspace_slug,
+            is_archived = False,
+            is_deleted = False,
+        ).first()
+    except Exception as e:
+        raise e
 
     cache.set(key , workspace , timeout = 300)
     return workspace

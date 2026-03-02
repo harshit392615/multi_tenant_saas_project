@@ -31,9 +31,10 @@ class WorkspaceListCreateAPI(TenantAPIviews):
 class WorkspaceDetailsAPI(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]
     def get(self , request , workspace_slug):
+        print(request.organization)
         workspace = get_workspace_by_slug(workspace_slug = workspace_slug , organization = request.organization)
         if not workspace:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Workspace not found"},status=status.HTTP_400_BAD_REQUEST)
         serializer = WorkspaceOutputSerializer(workspace)
         return Response(serializer.data , status=status.HTTP_200_OK)
 

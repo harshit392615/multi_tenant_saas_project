@@ -4,7 +4,7 @@ from django.conf import settings
 
 @shared_task(bind = True , autoretry_for = {Exception,} , retry_kwargs = {'max_retries':3})
 def send_invitation_email(self,email,org_name,token):
-    invite_url = f'http://127.0.0.1:5500/html/accept-invite.html?token={token}'
+    invite_url = f'https://multi-tenant-saas-project-frontend.vercel.app/html/accept-invite.html?token={token}'
     subject = "You're invited!"
     message = f"Hello,\n\nYou have been added to organization {org_name}.\nUse this link to accept the invitation and join the organization:\n{invite_url}\n\nThanks!"
     from_email = settings.DEFAULT_FROM_EMAIL

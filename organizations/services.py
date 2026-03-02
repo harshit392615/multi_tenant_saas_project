@@ -186,8 +186,8 @@ def Add_Subscription(user , actor , organization , data):
             "firstname": firstname,
             "email": email,
             "phone": "9999999999",
-            "surl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
-            "furl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
+            "surl": "https://multi-tenant-saas-project.onrender.com/api/organization/subscription/verify/",
+            "furl": "https://multi-tenant-saas-project.onrender.com/api/organization/subscription/verify/",
             "hash": hash,
         }
     return context
@@ -281,9 +281,9 @@ def Verify_Subscription(data):
     if data["status"] == "success":
         subscription.is_active = True
         subscription.save()
-        url = "http://127.0.0.1:5500/html/payment-success.html"
+        url = "https://multi-tenant-saas-project-frontend.vercel.app/html/payment-success.html"
     else:
-        url = "http://127.0.0.1:5500/html/payment-failed.html"
+        url = "https://multi-tenant-saas-project-frontend.vercel.app/html/payment-failed.html"
     
     return url
         

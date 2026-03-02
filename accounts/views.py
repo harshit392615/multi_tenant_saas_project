@@ -36,7 +36,7 @@ class SignupAPI(APIView):
         if serializer.is_valid():
             user = serializer.save()
             uid , token = send_verification(user=user)
-            verify_url = ("http://127.0.0.1:5500/html/verify.html"f"?uidb64={uid}&token={token}")
+            verify_url = ("https://multi-tenant-saas-project-frontend.vercel.app/html/verify.html"f"?uidb64={uid}&token={token}")
             send_verification_email.delay(email = user.email , verify_url=verify_url)
             Create_Org(user = user , name = f"{user.username}'s organization" , type="personal")
             return Response(serializer.data , status=status.HTTP_201_CREATED)
@@ -77,7 +77,7 @@ class ForgotPasswordSender(APIView):
         try:
             user = User.objects.get(email=email)
             uid , token = Forgot_password_sender(user=user)
-            reset_url = ("http://127.0.0.1:5500/html/reset-password.html"f"?uidb64={uid}&token={token}")
+            reset_url = ("https://multi-tenant-saas-project-frontend.vercel.app/html/reset-password.html"f"?uidb64={uid}&token={token}")
             send_Password_Reset_email.delay(email = user.email , verify_url=reset_url)
             return Response({"message": "Password reset email sent"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:

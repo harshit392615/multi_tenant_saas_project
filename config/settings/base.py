@@ -98,7 +98,7 @@ TEMPLATES = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
+    "https://multi-tenant-saas-project-frontend.vercel.app",
     "http://192.168.1.2:5500"
 ]
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -111,7 +111,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:5500",
+    "https://multi-tenant-saas-project-frontend.vercel.app",
     "http://localhost:5500",
     "http://192.168.1.2:5500"
 ]

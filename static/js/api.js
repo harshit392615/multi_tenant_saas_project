@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://multi-tenant-saas-project.onrender.com";
 
 const API_ENDPOINTS = {
     auth: {

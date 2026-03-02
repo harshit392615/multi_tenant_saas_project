@@ -1,4 +1,4 @@
-from httpx import request
+from http import request
 from rest_framework.views import APIView
 from common.exceptions import PermissionDenied
 from .selectors import get_org_for_user , get_memebrship_for_org , get_org_subscription

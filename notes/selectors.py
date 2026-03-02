@@ -9,7 +9,7 @@ from enum import Enum
 
 def get_notes(workspace_slug , actor , organization):
     workspace = Workspace.objects.get(slug = workspace_slug)
-    if actor.role not in ['owner','admin','member','viewer']:
+    if actor is None or actor.role not in ['owner','admin','member','viewer']:
         raise PermissionDenied("you are not allowed to perform this action")
     notes = Notes.objects.filter(
         workspace = workspace,

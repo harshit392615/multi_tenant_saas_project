@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from common.exceptions import PermissionDenied
-from .selectors import get_org_for_user , get_memebrship_for_org
-from .services import Create_Org , Update_Org , Delete_Org , Archive_Org , Add_Membership , Update_Membership , Add_Subscription , Verify_Subscription
-from .serializers import Organization_Create_Serializer , Organization_Update_Serializer , Organization_Archive_Serializer , Organization_Serializer , Membership_add_update , Membership_Get
+from .selectors import get_org_for_user , get_memebrship_for_org , get_org_subscription
+from .services import Create_Org , Update_Org , Delete_Org , Archive_Org , Add_Membership , Update_Membership , Add_Subscription , Verify_Subscription, delete_Membership
+from .serializers import Organization_Create_Serializer , Organization_Update_Serializer , Organization_Archive_Serializer , Organization_Serializer , Membership_add_update , Membership_Get  , Subscription_Serializer
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Membership
@@ -12,6 +12,7 @@ from notification.tasks import send_user_notification
 from core.redis_sync import redis_client
 import json
 from django.shortcuts import render
+from django.shortcuts import redirect
 
 # Create your views here
 
@@ -64,7 +65,7 @@ class Organization_Delete_API(TenantAPIviews):
     def delete(self , request , org_id):
         try:
             Delete_Org(id=org_id , actor=request.membership)
-            return Response(status=status.HTTP_202_ACCEPTED)
+            return Response({"message": "Organization deleted successfully"},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_400_BAD_REQUEST)
     
@@ -100,28 +101,42 @@ class Organization_Membership_API(TenantAPIviews):
             return Response({"message": "Member added successfully"},status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
+    def delete(self,request):
+        email = request.data.get('email')
+        if email:
+            membership = delete_Membership(request.membership , request.organization , email)
+            return Response({"message": "Member removed successfully"},status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
 class Organization_Membership_Update_API(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]
-    def post(self,request):
+    def put(self,request):
+        body = request.data
+        print(body)
         serializer = Membership_add_update(data = request.data)
         if serializer.is_valid():
             membership = Update_Membership(request.membership , request.organization , serializer.validated_data)
-            return Response(status=status.HTTP_202_ACCEPTED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Member updated successfully"},status=status.HTTP_202_ACCEPTED)
+        return Response({"error" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class Organization_Add_Subscription(TenantAPIviews):
+class Organization_Subscription(TenantAPIviews):
+    def get(self , request):
+        subscription = get_org_subscription(request.membership , request.organization)
+        serializer = Subscription_Serializer(subscription)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     def post(self , request):
         data = json.loads(request.body)
-
+        print(data)
         context = Add_Subscription(request.user,request.membership , request.organization , data)
 
         return Response(context , status=status.HTTP_201_CREATED)
+    
 
 class Organization_Verify_Subscription(TenantAPIviews):
     permission_classes = []
     def post(self , request):
         data = request.POST
 
-        Verify_Subscription(data)
+        url = Verify_Subscription(data)
 
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return redirect(url)

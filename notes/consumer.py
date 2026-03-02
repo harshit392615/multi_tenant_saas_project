@@ -60,7 +60,7 @@ class NotesUpdateConsumer(AsyncWebsocketConsumer):
         elif incoming["type"] == "insert" and applied["type"] == "delete":
             if applied_pos < incoming_pos:
                 incoming_pos -= min(
-                    applied["length"], incoming_pos - applied_pos
+                    int(applied["length"]), incoming_pos - applied_pos
                 )
 
         elif incoming["type"] == "delete" and applied["type"] == "insert":

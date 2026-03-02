@@ -2,7 +2,7 @@ from .models import Invitation
 from common.exceptions import PermissionDenied , ValidationError
 from organizations.models import Membership
 from django.utils import timezone
-def invite_user(* , organization , actor , email , role , expired_at ):
+def invite_user(* , organization , actor , email , role , expires_at ):
     if actor.role not in ['owner','admin']:
         raise PermissionDenied("you are not allowed to perform this action")
 
@@ -19,7 +19,7 @@ def invite_user(* , organization , actor , email , role , expired_at ):
         defaults={
             'role' : role,
             'accepted_at' : None,
-            'expired_at' : expired_at,
+            'expires_at' : expires_at,
         },
     )
 
@@ -49,3 +49,5 @@ def accept_invite(* , token , user):
 
     invitation.accepted_at = timezone.now()
     invitation.save(update_fields=['accepted_at',])
+
+    return 1

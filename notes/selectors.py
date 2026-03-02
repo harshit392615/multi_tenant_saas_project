@@ -18,6 +18,14 @@ def get_notes(workspace_slug , actor , organization):
 
     return notes
 
+def get_notes_for_org(actor , organization):
+    if actor.role not in ['owner','admin','member','viewer']:
+        raise PermissionDenied("you are not allowed to perform this action")
+    notes = Notes.objects.filter(
+        organization = organization
+    )
+
+    return notes
 def get_note(note_id , membership):
     if not membership:
         raise PermissionDenied("you are not allowed to perform this action")

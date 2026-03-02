@@ -10,6 +10,22 @@ def send_verification(*,user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     return uid , token 
     
+def Forgot_password_sender(*,user):
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    return uid , token 
+
+def password_reset_verifier(* , uidb64 , token , new_password):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk = uid)
+    except (User.DoesNotExist , ValueError , TypeError):
+        raise ValidationError("invalid request")   
+    
+    if user and default_token_generator.check_token(user , token):
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+        return user
 
 def Email_verifier(* , uidb64 , token):
     try:

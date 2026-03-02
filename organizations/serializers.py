@@ -39,3 +39,10 @@ class Membership_Get(serializers.Serializer):
     )
     email = serializers.EmailField()
     status = serializers.IntegerField()
+
+class Subscription_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = (
+            'title','start_date','duration','is_active'
+        )

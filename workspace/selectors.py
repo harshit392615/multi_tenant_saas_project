@@ -16,3 +16,20 @@ def get_workspace_for_org(*,organization):
 
     cache.set(key , qs , timeout = 300)
     return qs
+
+def get_workspace_by_slug(*,workspace_slug,organization):
+    key = f'org:{organization.id}:workspace_slug:{workspace_slug}'
+
+    cached = cache.get(key)
+    if cached:
+        return cached
+
+    workspace = Workspace.objects.filter(
+        organization = organization,
+        slug = workspace_slug,
+        is_archived = False,
+        is_deleted = False,
+    ).first()
+
+    cache.set(key , workspace , timeout = 300)
+    return workspace

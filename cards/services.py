@@ -14,6 +14,7 @@ def Create_Card(*,board,actor,assignee,serializer):
     card =  Card.objects.create(
         organization = board.organization,
         board = board,
+        workspace = board.workspace,
         assignee = assignee,
         **serializer
     )
@@ -29,20 +30,23 @@ def Create_Card(*,board,actor,assignee,serializer):
 
     return card
 
-def Update_Card(* ,slug,actor,serializer):
+def Update_Card(* ,slug,actor,title = None , description = None , status = None):
     if actor.role not in ['owner','admin','member']:
         raise PermissionDenied("You are not allowed to change status")
-    
-    if serializer['status'] not in dict(Card.STATUS_CHOICES):
-        raise PermissionDenied("This is not a valid status ")
     
     card = Card.objects.get(
         slug = slug
     )
-
-    for field, value in serializer.items():
-        setattr(card, field, value)
-
+    
+    if title:
+        card.title = title
+    if description:
+        card.description = description
+    if status:
+        if status not in dict(Card.STATUS_CHOICES):
+            raise PermissionDenied("This is not a valid status ")
+        card.status = status
+        
     card.save() 
     
     log_Activity(

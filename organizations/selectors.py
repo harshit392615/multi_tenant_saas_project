@@ -1,4 +1,4 @@
-from .models import Membership , Organization
+from .models import Membership , Organization , Subscription
 from common.exceptions import ValidationError
 
 def get_org_for_user(*,user):
@@ -17,4 +17,21 @@ def get_memebrship_for_org(actor , organization):
         organization = organization
     )
     return memberships
+
+def get_org_subscription(actor , organization):
+    if actor.role not in ['owner','admin','member','viewer']:
+        raise ValidationError("you cannot make this request")
+    
+    try:
+        subscription = Subscription.objects.get(    
+        organization = organization)
+    except Subscription.DoesNotExist:
+        return {
+            "title": "free",
+            "price": 0,
+            "rate_limit": "10/hour",
+            "duration": "unlimited",
+            "is_active": True
+        }
+    return subscription
 

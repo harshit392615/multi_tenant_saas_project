@@ -18,6 +18,8 @@ class JWTAuthenticationMiddleware:
 
         scope['note_id'] = note_id
 
+        print(note_id)
+
         if token:
             try:
                 validated_token = auth.get_validated_token(token)

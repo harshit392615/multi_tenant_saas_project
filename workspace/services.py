@@ -34,7 +34,7 @@ def Delete_Workspace(*,id,actor):
             id = id 
         )
     except Workspace.DoesNotExist: 
-        raise ValidationError("invalid organization id")
+        raise ValidationError("invalid workspace id")
     
     workspace.is_deleted =  True
 

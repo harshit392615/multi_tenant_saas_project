@@ -51,9 +51,9 @@ class Subscription(models.Model):
     ]
     price = models.IntegerField(choices=PRICE)
     RATE_LIMIT = [
-        ("10/hour","10/hour"),
-        ("15/hour","15/hour"),
-        ("20/hour","20/hour")
+        ("200/hour","200/hour"),
+        ("500/hour","500/hour"),
+        ("1000/hour","1000/hour")
     ]
     rate_limit = models.CharField(choices=RATE_LIMIT)
     DURATION = [

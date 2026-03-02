@@ -14,3 +14,13 @@ def send_verification_email(self,*,email,verify_url):
         recipient_list=[email],
         fail_silently=False
     )
+
+@shared_task(bind = True , autoretry_for={Exception,} , retry_kwargs = {'max_retries' : 3} )
+def send_Password_Reset_email(self,*,email,verify_url):
+    send_mail(
+        subject = 'reset your password',
+        message=f'click this link to reset your password,{verify_url}',
+        from_email = settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+        fail_silently=False
+    )

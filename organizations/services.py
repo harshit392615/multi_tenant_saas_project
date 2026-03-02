@@ -15,6 +15,14 @@ def Create_Org(*,user,name,type):
         organization = organization,
         role = 'owner',
     )
+    subscription = Subscription.objects.create(
+        organization = organization,
+        title = "basic",
+        price = 500,
+        rate_limit = "10/hour",
+        duration = 30,
+        is_active = True
+     )
 
     return organization
 
@@ -103,10 +111,25 @@ def Update_Membership(actor , organization , serializer):
 
     return membership
 
+def delete_Membership(actor , organization , email):
+    if actor.role not in ['owner','admin']:
+        raise PermissionError("you are not allowed to make this request")
+    
+    user = User.objects.get(
+        email = email
+    )
+    membership = Membership.objects.get(  
+        organization = organization,
+        user = user,
+    )
+
+    membership.delete()
+    
+    return 1
+
 def Add_Subscription(user , actor , organization , data):
     key = settings.PAYU_KEY
     salt = settings.PAYU_SALT
-    print(data)
     if actor.role != "owner":
         raise PermissionError("you are not allowed to make this request")
     
@@ -142,15 +165,84 @@ def Add_Subscription(user , actor , organization , data):
     hash = hashlib.sha512(hash_str.encode()).hexdigest()
 
     
-    Subscription.objects.create(
+    Subscription.objects.update_or_create(
         organization = organization,
-        title = data['title'],
-        price = subs[data['title']]['price'],
-        rate_limit = subs[data['title']]['rate_limit'],
-        duration = subs[data['title']]['duration'],
-        txnid = txnid,
-        is_active = False
+        defaults={
+            "title": data['title'],
+            "price": subs[data['title']]['price'],
+            "rate_limit": subs[data['title']]['rate_limit'],
+            "duration": subs[data['title']]['duration'],
+            "txnid": txnid,
+            "is_active": False
+        },
     )
+    
+    context = {
+            "payu_url": "https://test.payu.in/_payment",
+            "key": settings.PAYU_KEY,
+            "txnid": txnid,
+            "amount": subs[data['title']]['price'],
+            "productinfo": "subscription",
+            "firstname": firstname,
+            "email": email,
+            "phone": "9999999999",
+            "surl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
+            "furl": "http://127.0.0.1:8000/api/organization/subscription/verify/",
+            "hash": hash,
+        }
+    return context
+    
+def Update_Subscription(user , actor , organization , data):
+    key = settings.PAYU_KEY
+    salt = settings.PAYU_SALT
+    if actor.role != "owner":
+        raise PermissionError("you are not allowed to make this request")
+    
+    firstname = user.username
+    email = user.email
+    
+    if data['title'] not in ['basic','standard','premium']:
+        raise ValidationError("invalid subscription")
+    
+    txnid = uuid.uuid4().hex[:25]
+    
+    subs = {
+        "basic":{
+            "price":500,
+            "rate_limit":"10/hour",
+            "duration":30
+        },
+        "standard":{
+            "price":1000,
+            "rate_limit":"15/hour",
+            "duration":60
+        },
+        "premium":{
+            "price":5000,
+            "rate_limit":"20/hour",
+            "duration":365
+        }
+    }
+
+    hash_str = f"{key}|{txnid}|{subs[data['title']]['price']}|subscription|{firstname}|{email}|||||||||||{salt}"
+
+    
+    hash = hashlib.sha512(hash_str.encode()).hexdigest()
+
+    subscription = organization.subscription
+
+    if subscription:
+        subscription.organization = organization
+        subscription.title = data['title']
+        subscription.price = subs[data['title']]['price']
+        subscription.rate_limit = subs[data['title']]['rate_limit']
+        subscription.duration = subs[data['title']]['duration']
+        subscription.txnid = txnid
+        subscription.is_active = False
+        subscription.save()
+
+    else:
+        raise ValidationError("no active subscription found for this organization")
     
     context = {
             "payu_url": "https://test.payu.in/_payment",
@@ -166,7 +258,7 @@ def Add_Subscription(user , actor , organization , data):
             "hash": hash,
         }
     return context
-    
+
 def Verify_Subscription(data):
     key = settings.PAYU_KEY
     salt = settings.PAYU_SALT
@@ -189,4 +281,9 @@ def Verify_Subscription(data):
     if data["status"] == "success":
         subscription.is_active = True
         subscription.save()
+        url = "http://127.0.0.1:5500/html/payment-success.html"
+    else:
+        url = "http://127.0.0.1:5500/html/payment-failed.html"
+    
+    return url
         

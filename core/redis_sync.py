@@ -1,4 +1,4 @@
 import redis
 
 from django.conf import settings
-redis_client = redis.from_url(settings.REDIS_LOCATION)
+redis_client = redis.from_url(settings.REDIS_LOCATION , decode_responses=True)

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from organizations.views import TenantAPIviews
 from core.throttles import OrganizationThrottling
-from .selectors import get_notes
+from .selectors import get_notes , get_notes_for_org , get_note
 from .serializers import notes_Serializer , notes_Create_Serializer
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,6 +23,12 @@ class Notes_List_create(TenantAPIviews):
          serializer = notes_Serializer(note)
          return Response(serializer.data , status=status.HTTP_201_CREATED)
 
+class Note_List_For_Org(TenantAPIviews):
+   throttle_classes = [OrganizationThrottling]
+   def get(self , request):
+      notes = get_notes_for_org(actor = request.membership , organization = request.organization)
+      serializer = notes_Serializer(notes , many = True)
+      return Response(serializer.data , status = status.HTTP_202_ACCEPTED)
 
 class Note_Delete_API(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]

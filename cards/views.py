@@ -5,7 +5,7 @@ from common.exceptions import ValidationError
 
 from .models import Card
 from board.models import Board
-from .selectors import get_card_for_board
+from .selectors import get_card_for_board , get_Cards , get_Cards_for_workspace
 from .services import Create_Card , Update_Card , Delete_card
 from .serializers import CardSerializer , CardCreateSerializer
 from organizations.views import TenantAPIviews
@@ -41,18 +41,33 @@ class CardListCreateAPI(TenantAPIviews):
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         
         raise ValidationError("invalid data ")
+    
+class CardListForOrg(TenantAPIviews):
+    def get(self , request):
+        cards = get_Cards(actor = request.membership , organization = request.organization)
+        serializer = CardSerializer(cards , many = True)
+        return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
 
 class CardUpdateAPI(TenantAPIviews):
     def put(self , request , card_slug):
-
-        serializer = CardCreateSerializer(data = request.data)
-        if serializer.is_valid():
-            card = Update_Card(slug = card_slug , actor = request.membership , serializer=serializer.validated_data)
-
-            serializer = CardSerializer(card)
-
-            return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
         
+        title = request.data.get('title',None)
+        description = request.data.get('description',None)
+        status_ = request.data.get('status',None)
+        try:
+            print(title,description,status_)
+            card = Update_Card(slug = card_slug , actor = request.membership , title = title , description = description , status = status_)
+            return Response({"message": "Card updated successfully"}, status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            print(e)
+            return Response({"error":"invalid request"} , status=status.HTTP_400_BAD_REQUEST)
+        
+class CardListForWorkspace(TenantAPIviews):
+    def get(self , request , workspace_slug):
+        cards = get_Cards_for_workspace(actor = request.membership , organization = request.organization , workspace_slug = workspace_slug)
+        serializer = CardSerializer(cards , many = True)
+        return Response(serializer.data , status=status.HTTP_202_ACCEPTED)
+
 class CardDeleteAPI(TenantAPIviews):
     def delete(self , request , card_id):
 

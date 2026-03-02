@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/board/',include('board.urls')),
     path('api/card/',include('cards.urls')),
     path('api/activities/',include('activities.urls')),
-    path('invites/',include('invitations.urls')),
+    path('api/invites/',include('invitations.urls')),
     path('api/organization/',include('organizations.urls')),
     path('api/notes/' , include('notes.urls')),
     path('api/' , include('notification.urls')),

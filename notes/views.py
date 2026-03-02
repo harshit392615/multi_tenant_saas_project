@@ -38,3 +38,12 @@ class Note_Delete_API(TenantAPIviews):
             return Response(status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return Response({'error' : str(e)},status=status.HTTP_400_BAD_REQUEST)
+        
+class Note_Details_API(TenantAPIviews):
+    throttle_classes = [OrganizationThrottling]
+    def get(self , request , note_id):
+        note = get_note(note_id=note_id , actor=request.membership)
+        if not note:
+            return Response({'error': 'Note not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = notes_Serializer(note)
+        return Response(serializer.data , status=status.HTTP_200_OK)

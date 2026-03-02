@@ -26,11 +26,11 @@ def get_notes_for_org(actor , organization):
     )
 
     return notes
-def get_note(note_id , membership):
-    if not membership:
+def get_note(note_id , actor):
+    if actor.role not in ['owner','admin','member','viewer']:
         raise PermissionDenied("you are not allowed to perform this action")
-    content = Notes.objects.values_list(
-        "content" , flat=True
-    ).get(id = note_id)
+    note = Notes.objects.get(
+        id = note_id,
+    )
 
-    return content
+    return note

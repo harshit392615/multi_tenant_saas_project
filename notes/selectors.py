@@ -31,7 +31,8 @@ def get_notes_for_org(actor , organization):
 
     return notes
 def get_note(note_id , actor):
-    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
+    print(actor)
+    if not actor:
         raise PermissionDenied("you are not allowed to perform this action")
     note = Notes.objects.get(
         id = note_id,

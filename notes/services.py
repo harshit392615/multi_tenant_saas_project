@@ -39,6 +39,9 @@ def update_note(note_id, ops):
             length = int(op["length"])
             content = content[:pos] + content[pos + length:]
 
+        else :
+            raise ValidationError("invalid operation type")
+
     note = Notes.objects.get(id=note_id)
     note.content = content
     note.save()

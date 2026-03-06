@@ -32,7 +32,7 @@ class NotesUpdateConsumer(AsyncWebsocketConsumer):
                     {
                         "type": "insert",
                         "pos": 0,
-                        "content": content,
+                        "content": content.content,
                         "version": version,
                     },
                 )

@@ -13,7 +13,7 @@ class UserRole(Enum):
 
 def get_notes(workspace_slug , actor , organization):
     workspace = Workspace.objects.get(slug = workspace_slug)
-    if actor is None or actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor is None or actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     notes = Notes.objects.filter(
         workspace = workspace,
@@ -23,7 +23,7 @@ def get_notes(workspace_slug , actor , organization):
     return notes
 
 def get_notes_for_org(actor , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     notes = Notes.objects.filter(
         organization = organization
@@ -31,7 +31,7 @@ def get_notes_for_org(actor , organization):
 
     return notes
 def get_note(note_id , actor):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     note = Notes.objects.get(
         id = note_id,

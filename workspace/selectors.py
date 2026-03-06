@@ -12,7 +12,8 @@ class UserRole(Enum):
     VIEWER = "viewer"
 
 def get_workspace_for_org(*,actor,organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
+        print(actor.role)
         raise PermissionDenied("you are not allowed to perform this action")
     key = f'org:{organization.id}:workspaces'
 

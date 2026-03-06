@@ -18,7 +18,7 @@ def get_card_for_board(*,board):
     ).order_by('created_at')
 
 def get_Cards(actor , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     cards = Card.objects.filter(
         organization = organization
@@ -26,7 +26,7 @@ def get_Cards(actor , organization):
     return cards
 
 def get_Cards_for_workspace(actor , organization , workspace_slug):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     
     workspace = Workspace.objects.get(

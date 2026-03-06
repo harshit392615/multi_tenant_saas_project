@@ -11,7 +11,7 @@ class UserRole(Enum):
     VIEWER = "viewer"
 
 def create_note(workspace_slug , actor , organization , serializer):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value]:
         raise PermissionDenied("you are not allowed to create a note")
     
     workspace = Workspace.objects.get(
@@ -44,7 +44,7 @@ def update_note(note_id, ops):
     note.save()
 
 def Delete_Note(*,id,actor):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     
     try:

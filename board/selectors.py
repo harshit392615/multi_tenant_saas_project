@@ -19,7 +19,7 @@ def get_boards_for_workspace(*,workspace):
     return boards
 
 def get_Boards(actor , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     boards = Board.objects.filter(
         organization = organization
@@ -27,7 +27,7 @@ def get_Boards(actor , organization):
     
     return boards
 def get_board_for_slug(*,actor,board_slug , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     board = Board.objects.get(
             slug = board_slug,

@@ -17,7 +17,7 @@ def get_org_for_user(*,user):
     return organization
 
 def get_memebrship_for_org(actor , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise ValidationError("you cannot make this request")
     
     memberships = Membership.objects.filter(
@@ -26,7 +26,7 @@ def get_memebrship_for_org(actor , organization):
     return memberships
 
 def get_org_subscription(actor , organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise ValidationError("you cannot make this request")
     
     try:

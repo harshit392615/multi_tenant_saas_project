@@ -13,7 +13,7 @@ class UserRole(Enum):
     VIEWER = "viewer"
 
 def Create_Card(*,board,actor,assignee,serializer):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("you are not allowed to create cards")
 
     if board.is_archived:
@@ -39,7 +39,7 @@ def Create_Card(*,board,actor,assignee,serializer):
     return card
 
 def Update_Card(* ,slug,actor,title = None , description = None , status = None):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value]:
         raise PermissionDenied("You are not allowed to change status")
     
     card = Card.objects.get(
@@ -69,7 +69,7 @@ def Update_Card(* ,slug,actor,title = None , description = None , status = None)
     return card
 
 def Delete_card(*,id,actor):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("You are not allowed to delete cards")
     
     card = Card.objects.get(
@@ -92,7 +92,7 @@ def Delete_card(*,id,actor):
     return 1
     
 def Archive_Card(*,card,actor):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value]:
         raise PermissionDenied("You are not allowed to change status")
     
     card.is_archived = True

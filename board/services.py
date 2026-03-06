@@ -9,7 +9,7 @@ class UserRole(Enum):
     VIEWER = "viewer"
 
 def Create_Board(*,workspace,actor,name):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value]:
         raise PermissionDenied("You are not allowed to make a Board")
     
     if workspace.is_archived:
@@ -21,14 +21,14 @@ def Create_Board(*,workspace,actor,name):
     )
 
 def Archive_Board(*,board,actor):
-    if actor not in [UserRole.OWNER,UserRole.ADMIN,UserRole.MEMBER]:
+    if actor.role not in [UserRole.OWNER.value,UserRole.ADMIN.value,UserRole.MEMBER.value]:
         raise PermissionDenied("You are not allowed to archive this board")
     
     board.is_archived = True
     board.save(update_fields = ['is_archived'])
 
 def Delete_Board(*,id,actor):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("you are not allowed to perform this action")
     
     try:

@@ -10,7 +10,7 @@ class UserRole(Enum):
     MEMBER = "member"
     VIEWER = "viewer"
 def invite_user(* , organization , actor , email , role , expires_at ):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("you are not allowed to perform this action")
 
     if Membership.objects.filter(

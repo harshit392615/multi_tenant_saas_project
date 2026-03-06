@@ -1,6 +1,7 @@
 from .models import Card
 from common.exceptions import PermissionDenied
 from workspace.models import Workspace
+from enum import Enum
 
 class UserRole(Enum):
     OWNER = "owner"

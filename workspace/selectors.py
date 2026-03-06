@@ -1,6 +1,6 @@
 from enum import Enum
 
-from multi_tenant_saas_project.common.exceptions import PermissionDenied
+from common.exceptions import PermissionDenied
 
 from .models import Workspace
 from django.core.cache import cache

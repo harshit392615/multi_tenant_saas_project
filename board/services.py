@@ -1,8 +1,15 @@
 from .models import Board
 from common.exceptions import PermissionDenied ,ValidationError 
+from enum import Enum
+
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
 
 def Create_Board(*,workspace,actor,name):
-    if actor.role not in ['owner','admin','member']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
         raise PermissionDenied("You are not allowed to make a Board")
     
     if workspace.is_archived:
@@ -14,14 +21,14 @@ def Create_Board(*,workspace,actor,name):
     )
 
 def Archive_Board(*,board,actor):
-    if actor not in ['owner','admin','member']:
+    if actor not in [UserRole.OWNER,UserRole.ADMIN,UserRole.MEMBER]:
         raise PermissionDenied("You are not allowed to archive this board")
     
     board.is_archived = True
     board.save(update_fields = ['is_archived'])
 
 def Delete_Board(*,id,actor):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("you are not allowed to perform this action")
     
     try:

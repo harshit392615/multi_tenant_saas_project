@@ -2,8 +2,15 @@ from .models import Invitation
 from common.exceptions import PermissionDenied , ValidationError
 from organizations.models import Membership
 from django.utils import timezone
+from enum import Enum
+
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
 def invite_user(* , organization , actor , email , role , expires_at ):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("you are not allowed to perform this action")
 
     if Membership.objects.filter(

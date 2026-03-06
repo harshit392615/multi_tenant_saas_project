@@ -35,7 +35,7 @@ class Board_List_For_Org(TenantAPIviews):
 class BoardDetailsAPI(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]
     def get(self , request , board_slug):
-        board = get_board_for_slug(board_slug = board_slug , organization = request.organization)
+        board = get_board_for_slug(actor=request.membership , board_slug = board_slug , organization = request.organization)
         serializer = BoardSerializer(board)
         return Response(serializer.data , status=status.HTTP_200_OK)
    

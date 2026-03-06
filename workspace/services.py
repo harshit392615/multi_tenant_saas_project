@@ -2,10 +2,17 @@ from .models import Workspace
 from common.exceptions import PermissionDenied
 from activities.services import log_Activity
 from django.core.cache import cache
-from common.exceptions import PermissionDenied ,ValidationError 
+from common.exceptions import PermissionDenied ,ValidationError
+from enum import Enum
+
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
 
 def Create_Workspace(*,organization , actor , name):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
         raise PermissionDenied("You cannot create a workspace")
 
     workspace = Workspace.objects.create(
@@ -20,13 +27,13 @@ def Create_Workspace(*,organization , actor , name):
     return workspace
 
 def Archive_Workspace(*,workspace,actor):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("You cannot archive a workspace")
     workspace.is_archived = True
     workspace.save(update_fields = ['is_archived'])
 
 def Delete_Workspace(*,id,actor):
-    if actor.role not in  ['owner','admin']:
+    if actor.role not in  [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("you are not allowed to perform this action")
     
     try:

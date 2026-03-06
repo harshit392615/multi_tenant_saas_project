@@ -1,5 +1,12 @@
 from .models import Membership , Organization , Subscription
 from common.exceptions import ValidationError
+from enum import Enum
+
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
 
 def get_org_for_user(*,user):
     organization = Organization.objects.filter(
@@ -10,7 +17,7 @@ def get_org_for_user(*,user):
     return organization
 
 def get_memebrship_for_org(actor , organization):
-    if actor.role not in ['owner','admin','member','viewer']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
         raise ValidationError("you cannot make this request")
     
     memberships = Membership.objects.filter(
@@ -19,7 +26,7 @@ def get_memebrship_for_org(actor , organization):
     return memberships
 
 def get_org_subscription(actor , organization):
-    if actor.role not in ['owner','admin','member','viewer']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
         raise ValidationError("you cannot make this request")
     
     try:

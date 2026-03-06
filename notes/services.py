@@ -1,9 +1,17 @@
+from enum import Enum
+
 from .models import Notes
 from common.exceptions import PermissionDenied , ValidationError
 from workspace.models import Workspace
 
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
+
 def create_note(workspace_slug , actor , organization , serializer):
-    if actor.role not in ['owner','admin','member']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
         raise PermissionDenied("you are not allowed to create a note")
     
     workspace = Workspace.objects.get(

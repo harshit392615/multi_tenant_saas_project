@@ -1,7 +1,19 @@
+from enum import Enum
+
+from multi_tenant_saas_project.common.exceptions import PermissionDenied
+
 from .models import Workspace
 from django.core.cache import cache
 
-def get_workspace_for_org(*,organization):
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
+
+def get_workspace_for_org(*,actor,organization):
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+        raise PermissionDenied("you are not allowed to perform this action")
     key = f'org:{organization.id}:workspaces'
 
     cached = cache.get(key)
@@ -17,7 +29,10 @@ def get_workspace_for_org(*,organization):
     cache.set(key , qs , timeout = 300)
     return qs
 
-def get_workspace_by_slug(*,workspace_slug,organization):
+def get_workspace_by_slug(*,actor,workspace_slug,organization):
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+        raise PermissionDenied("you are not allowed to perform this action")
+
     key = f'org:{organization.id}:workspace_slug:{workspace_slug}'
 
     cached = cache.get(key)

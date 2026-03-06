@@ -1,11 +1,19 @@
+from enum import Enum
+
 from .models import Card
 from board.models import Board
 from activities.services import log_Activity
 
 from common.exceptions import PermissionDenied
 
+class UserRole(Enum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
+
 def Create_Card(*,board,actor,assignee,serializer):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("you are not allowed to create cards")
 
     if board.is_archived:
@@ -31,7 +39,7 @@ def Create_Card(*,board,actor,assignee,serializer):
     return card
 
 def Update_Card(* ,slug,actor,title = None , description = None , status = None):
-    if actor.role not in ['owner','admin','member']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
         raise PermissionDenied("You are not allowed to change status")
     
     card = Card.objects.get(
@@ -61,7 +69,7 @@ def Update_Card(* ,slug,actor,title = None , description = None , status = None)
     return card
 
 def Delete_card(*,id,actor):
-    if actor.role not in ['owner','admin']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
         raise PermissionDenied("You are not allowed to delete cards")
     
     card = Card.objects.get(
@@ -84,7 +92,7 @@ def Delete_card(*,id,actor):
     return 1
     
 def Archive_Card(*,card,actor):
-    if actor.role not in ['owner','admin','member']:
+    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER]:
         raise PermissionDenied("You are not allowed to change status")
     
     card.is_archived = True

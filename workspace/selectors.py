@@ -31,7 +31,7 @@ def get_workspace_for_org(*,actor,organization):
     return qs
 
 def get_workspace_by_slug(*,actor,workspace_slug,organization):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise PermissionDenied("you are not allowed to perform this action")
 
     key = f'org:{organization.id}:workspace_slug:{workspace_slug}'

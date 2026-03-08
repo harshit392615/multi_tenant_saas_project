@@ -36,7 +36,7 @@ def Create_Org(*,user,name,type):
     return organization
 
 def Update_Org(*,slug,actor,name):
-    if actor.role != UserRole.OWNER:
+    if actor.role != UserRole.OWNER.value:
         raise PermissionDenied("you are not allowed to perform this action")
     try:
         organization = Organization.objects.get(
@@ -52,7 +52,7 @@ def Update_Org(*,slug,actor,name):
     return organization
 
 def Delete_Org(*,id,actor):
-    if actor.role != UserRole.OWNER:
+    if actor.role != UserRole.OWNER.value:
         raise PermissionDenied("you are not allowed to perform this action")
     
     try:
@@ -68,7 +68,7 @@ def Delete_Org(*,id,actor):
     return 1
 
 def Archive_Org(*,slug,actor):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionDenied("You cannot archive a workspace")
     try:
         organization = Organization.objects.get(
@@ -82,10 +82,10 @@ def Archive_Org(*,slug,actor):
 # fix this api asap 
 
 def Add_Membership(actor , organization , serializer):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionError("you are not allowed to make this request")
     
-    if serializer['role'] not in [UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if serializer['role'] not in [UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise ValidationError("not a valid role")
     
     user = User.objects.get(
@@ -100,10 +100,10 @@ def Add_Membership(actor , organization , serializer):
     return membership
 
 def Update_Membership(actor , organization , serializer):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionError("you are not allowed to make this request")
     
-    if serializer['role'] not in [UserRole.ADMIN , UserRole.MEMBER , UserRole.VIEWER]:
+    if serializer['role'] not in [UserRole.ADMIN.value , UserRole.MEMBER.value , UserRole.VIEWER.value]:
         raise ValidationError("not a valid role")
     
     user = User.objects.get(
@@ -121,7 +121,7 @@ def Update_Membership(actor , organization , serializer):
     return membership
 
 def delete_Membership(actor , organization , email):
-    if actor.role not in [UserRole.OWNER , UserRole.ADMIN]:
+    if actor.role not in [UserRole.OWNER.value , UserRole.ADMIN.value]:
         raise PermissionError("you are not allowed to make this request")
     
     user = User.objects.get(
@@ -133,7 +133,7 @@ def delete_Membership(actor , organization , email):
         user = user,
     )
 
-    if membership.role == UserRole.OWNER:
+    if membership.role == UserRole.OWNER.value:
         raise PermissionDenied("you cannot delete owner")
 
     membership.delete()
@@ -143,7 +143,7 @@ def delete_Membership(actor , organization , email):
 def Add_Subscription(user , actor , organization , data):
     key = settings.PAYU_KEY
     salt = settings.PAYU_SALT
-    if actor.role != UserRole.OWNER:
+    if actor.role != UserRole.OWNER.value:
         raise PermissionError("you are not allowed to make this request")
     
     firstname = user.username
@@ -208,7 +208,7 @@ def Add_Subscription(user , actor , organization , data):
 def Update_Subscription(user , actor , organization , data):
     key = settings.PAYU_KEY
     salt = settings.PAYU_SALT
-    if actor.role != UserRole.OWNER:
+    if actor.role != UserRole.OWNER.value:
         raise PermissionError("you are not allowed to make this request")
     
     firstname = user.username

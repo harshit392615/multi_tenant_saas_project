@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ForgotPasswordSender, Forgot_Password_Reset_API, LoginAPI , RefreshTokenAPI , SignupAPI , EmailVerifyAPI , Get_User_Activity , Password_Reset_API
+from .views import ForgotPasswordSender, Forgot_Password_Reset_API, LoginAPI , RefreshTokenAPI , SignupAPI , EmailVerifyAPI , Get_User_Activity , Password_Reset_API , RegisterDeviceTokenView
 
 app_name = 'accounts'
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('forgot-password/' , ForgotPasswordSender.as_view() , name = 'forgot_password'),
     path('forgot-password-reset/' , Forgot_Password_Reset_API.as_view() , name = 'Forgot_reset_password'),
     path('password-reset/' , Password_Reset_API.as_view() , name = 'reset_password'),
+    path('register-fcm-token/' , RegisterDeviceTokenView.as_view() , name = 'register_fcm_token'),
 ]

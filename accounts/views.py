@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from organizations.views import TenantAPIviews 
 
 from .models import User
 from .serializers import UserSignupSerializer , UserLoginSerializer
@@ -14,6 +15,8 @@ from django.http import StreamingHttpResponse , HttpResponseForbidden
 from organizations.services import Create_Org
 from django.contrib.auth import authenticate
 from organizations.views import TenantAPIviews
+from .services import register_fcm_token
+from notification.services import Create_user_Notifications
 # Create your views here.
 
 class LoginAPI(TokenObtainPairView):
@@ -121,3 +124,14 @@ class Password_Reset_API(TenantAPIviews):
         else:
             return Response({"error": "Invalid token or user"}, status=status.HTTP_400_BAD_REQUEST)
         
+class RegisterDeviceTokenView(TenantAPIviews):
+
+    def post(self, request):
+        token = request.data.get('fcm_token')
+        
+        if not token:
+            return Response({"error": "fcm_token is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        register_fcm_token(user=request.user, token=token) 
+        
+        return Response({"message": "Device token registered successfully"}, status=status.HTTP_200_OK)

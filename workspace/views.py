@@ -8,6 +8,8 @@ from .selectors import get_workspace_for_org , get_workspace_by_slug
 from .serializers import WorkspaceCreateSerializer , WorkspaceOutputSerializer
 from core.throttles import OrganizationThrottling
 from organizations.views import TenantAPIviews
+from notification.services import Create_user_Notifications
+
 # Create your views here.
 class WorkspaceListCreateAPI(TenantAPIviews):
     throttle_classes = [OrganizationThrottling]
@@ -15,6 +17,7 @@ class WorkspaceListCreateAPI(TenantAPIviews):
         if not request.organization:
             return Response(status = status.HTTP_400_BAD_REQUEST)
         qs = get_workspace_for_org(actor=request.membership, organization=request.organization)
+        Create_user_Notifications("helllo" , "jsbhsbhs" , request.user.id)
         serializer = WorkspaceOutputSerializer(qs , many = True)
         return Response(serializer.data)
 

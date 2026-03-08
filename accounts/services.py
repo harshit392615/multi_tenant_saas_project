@@ -2,7 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode ,  urlsafe_base64_decode
 from django.utils.encoding import force_bytes , force_str
 
-from .models import User
+from .models import User , Device
 from common.exceptions import ValidationError
 
 def send_verification(*,user):
@@ -39,3 +39,8 @@ def Email_verifier(* , uidb64 , token):
         user.save(update_fields=['email_verified'])
         return user
     
+def register_fcm_token(* , user , token):
+    Device.objects.get_or_create(
+            user=user,
+            registration_id=token
+        )

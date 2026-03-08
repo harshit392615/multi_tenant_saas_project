@@ -128,7 +128,7 @@ DATABASES = {
     "default": dj_database_url.parse(
         os.getenv("DB_URL"),
         conn_max_age=600,
-        ssl_require=True,  # REQUIRED for Render
+        # ssl_require=True,  # REQUIRED for Render
     )
 }
 

@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'notes',
     'notification',
     'channels',
+    "fcm_django",
 ]
 
 MIDDLEWARE = [
